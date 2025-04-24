@@ -12,11 +12,11 @@ public interface IVehiculeDAO extends IBaseDAO<Vehicule> {
 
     /**
      * Recherche les véhicules par état
-     * @param idEtatVoiture ID de l'état recherché
+     * @param libEtatVoiture ID de l'état recherché
      * @return Liste des véhicules dans l'état spécifié
      * @throws SQLException En cas d'erreur SQL
      */
-    List<Vehicule> findByEtat(int idEtatVoiture) throws SQLException;
+    List<Vehicule> findByEtat(String libEtatVoiture) throws SQLException;
 
     /**
      * Recherche les véhicules disponibles (non attribués et en état disponible)

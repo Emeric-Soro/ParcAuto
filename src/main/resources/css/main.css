@@ -1,0 +1,158 @@
+/* Styles pour l'application MiAuto */
+
+/* Styles globaux */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 12px;
+    -fx-background-color: #f5f5f5;
+}
+
+/* En-têtes */
+.label {
+    -fx-text-fill: #333333;
+}
+
+.label.title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 10 0;
+}
+
+.label.subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 0 5 0;
+}
+
+/* Boutons */
+.button {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: white;
+    -fx-padding: 8 15 8 15;
+    -fx-background-radius: 3;
+}
+
+.button:hover {
+    -fx-background-color: #3275e4;
+}
+
+.button:pressed {
+    -fx-background-color: #2265d4;
+}
+
+/* Boutons d'action secondaires */
+.button.secondary {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #333333;
+    -fx-border-color: #dddddd;
+}
+
+.button.secondary:hover {
+    -fx-background-color: #e4e4e4;
+}
+
+/* Boutons d'alerte/suppression */
+.button.danger {
+    -fx-background-color: #db4437;
+    -fx-text-fill: white;
+}
+
+.button.danger:hover {
+    -fx-background-color: #c53929;
+}
+
+/* Champs texte */
+.text-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3;
+    -fx-padding: 8 10 8 10;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #4285f4;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #e0e0e0;
+    -fx-padding: 10 5 10 5;
+}
+
+.table-view .column-header-background .label {
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #fafafa;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #e8f0fe;
+    -fx-text-fill: #333333;
+}
+
+/* Formulaires */
+.form-container {
+    -fx-spacing: 10;
+    -fx-padding: 20;
+}
+
+.form-field {
+    -fx-spacing: 5;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+}
+
+/* Messages d'erreur */
+.error-label {
+    -fx-text-fill: #d32f2f;
+    -fx-font-size: 11px;
+}
+
+/* Barre de navigation/menu */
+.nav-menu {
+    -fx-background-color: #333333;
+    -fx-padding: 10;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 10 15 10 15;
+    -fx-border-radius: 0;
+}
+
+.nav-button:hover {
+    -fx-background-color: #444444;
+}
+
+.nav-button.active {
+    -fx-background-color: #4285f4;
+}
+
+/* Statuts de véhicule */
+.status-disponible {
+    -fx-text-fill: #0f9d58;
+}
+
+.status-indisponible {
+    -fx-text-fill: #db4437;
+}
+
+.status-maintenance {
+    -fx-text-fill: #f4b400;
+}

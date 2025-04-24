@@ -26,6 +26,7 @@
                         <Label text="Rechercher par:" />
                         <ComboBox fx:id="comboTypeCritere" prefWidth="150.0" promptText="Critère" />
                         <TextField fx:id="txtRecherche" promptText="Valeur recherchée..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="comboEtats" prefWidth="150.0" promptText="État" visible="false" HBox.hgrow="NEVER" />
                         <Button fx:id="btnRechercher" mnemonicParsing="false" onAction="#handleRechercherButton" text="Rechercher" />
                         <Button fx:id="btnRafraichir" mnemonicParsing="false" onAction="#handleRafraichirButton" text="Rafraîchir" />
                     </children>
