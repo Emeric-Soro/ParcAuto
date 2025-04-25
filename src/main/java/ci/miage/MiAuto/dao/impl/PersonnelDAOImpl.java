@@ -44,11 +44,11 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, p.getNom());
-            stmt.setString(2, p.getPrenom());
-            stmt.setString(3, p.getGenre());
-            stmt.setString(4, p.getTelephone());
-            stmt.setString(5, p.getEmail());
+            stmt.setString(1, p.getNomPersonnel());
+            stmt.setString(2, p.getPrenomPersonnel());
+            stmt.setString(3, p.getGenrePersonnel());
+            stmt.setString(4, p.getContactPersonnel());
+            stmt.setString(5, p.getEmailPersonnel());
             stmt.setInt(6, p.getIdFonction());
             stmt.setInt(7, p.getIdService());
 
@@ -70,11 +70,11 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
         String query = "UPDATE personnel SET nom = ?, prenom = ?, genre = ?, telephone = ?, email = ?, id_fonction = ?, id_service = ? WHERE id_personnel = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, p.getNom());
-            stmt.setString(2, p.getPrenom());
-            stmt.setString(3, p.getGenre());
-            stmt.setString(4, p.getTelephone());
-            stmt.setString(5, p.getEmail());
+            stmt.setString(1, p.getNomPersonnel());
+            stmt.setString(2, p.getPrenomPersonnel());
+            stmt.setString(3, p.getGenrePersonnel());
+            stmt.setString(4, p.getContactPersonnel());
+            stmt.setString(5, p.getEmailPersonnel());
             stmt.setInt(6, p.getIdFonction());
             stmt.setInt(7, p.getIdService());
             stmt.setInt(8, p.getIdPersonnel());

@@ -12,6 +12,7 @@ public class Personnel {
     private int idService;
     private String nomPersonnel;
     private String prenomPersonnel;
+    private String genrePersonnel;
     private String contactPersonnel;
     private LocalDateTime dateAttribution;
     private String emailPersonnel;
@@ -37,9 +38,17 @@ public class Personnel {
         this.prenomPersonnel = prenomPersonnel;
     }
 
+    public String getGenrePersonnel() {
+        return genrePersonnel;
+    }
+
+    public void setGenrePersonnel(String genrePersonnel) {
+        this.genrePersonnel = genrePersonnel;
+    }
+
     // Constructeur complet
     public Personnel(int idPersonnel, int idVehicule, int idFonction, int idService,
-                     String nomPersonnel, String prenomPersonnel, String contactPersonnel,
+                     String nomPersonnel, String prenomPersonnel, String contactPersonnel,String genrePersonnel,
                      LocalDateTime dateAttribution, String emailPersonnel,
                      String adressePersonnel, LocalDateTime dateEmbauche) {
         this.idPersonnel = idPersonnel;
@@ -48,6 +57,7 @@ public class Personnel {
         this.idService = idService;
         this.nomPersonnel = nomPersonnel;
         this.prenomPersonnel = prenomPersonnel;
+        this.genrePersonnel = genrePersonnel;
         this.contactPersonnel = contactPersonnel;
         this.dateAttribution = dateAttribution;
         this.emailPersonnel = emailPersonnel;

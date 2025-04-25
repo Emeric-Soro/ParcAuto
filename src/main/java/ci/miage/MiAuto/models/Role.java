@@ -1,5 +1,6 @@
 package main.java.ci.miage.MiAuto.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class Role {
 
     // Constructeur par défaut
     public Role() {
+        this.privileges = new ArrayList<>();
     }
 
     // Constructeur avec les champs obligatoires
@@ -27,6 +29,7 @@ public class Role {
         this.idRole = idRole;
         this.nomRole = nomRole;
         this.description = description;
+        this.privileges = new ArrayList<>();
     }
 
     // Getters et Setters
@@ -63,9 +66,20 @@ public class Role {
     }
 
     /**
+     * Ajoute un privilège au rôle
+     * @param privilege Privilège à ajouter
+     */
+    public void addPrivilege(Privilege privilege) {
+        if (privileges == null) {
+            privileges = new ArrayList<>();
+        }
+        privileges.add(privilege);
+    }
+
+    /**
      * Vérifie si le rôle possède un privilège spécifique
-     * @param nomPrivilege Le nom du privilège à vérifier
-     * @return true si le rôle possède le privilège, false sinon
+     * @param nomPrivilege Nom du privilège à vérifier
+     * @return true si le rôle a le privilège, false sinon
      */
     public boolean hasPrivilege(String nomPrivilege) {
         if (privileges == null || privileges.isEmpty()) {
@@ -73,7 +87,7 @@ public class Role {
         }
 
         return privileges.stream()
-                .anyMatch(privilege -> privilege.getNomPrivilege().equals(nomPrivilege));
+                .anyMatch(p -> p.getNomPrivilege().equals(nomPrivilege));
     }
 
     @Override

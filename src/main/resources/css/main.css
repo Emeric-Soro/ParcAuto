@@ -3,110 +3,238 @@
 /* Styles globaux */
 .root {
     -fx-font-family: "Segoe UI", Arial, sans-serif;
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
+    -fx-background-color: #f8f9fa;
+}
+
+/* Styles pour la page de connexion */
+.login-panel {
     -fx-background-color: #f5f5f5;
 }
 
-/* En-têtes */
-.label {
+.login-form {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-background-radius: 5;
+}
+
+.logo-panel {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 0 5 5 0;
+}
+
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }
 
-.label.title {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-padding: 10 0 10 0;
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
 }
 
-.label.subtitle {
+.company-name {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.company-slogan {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+}
+
+.login-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+}
+
+.login-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.error-message {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 12px;
+}
+
+/* Styles pour le tableau de bord */
+.dashboard-root {
+    -fx-background-color: #f5f5f5;
+}
+
+.sidebar {
+    -fx-background-color: #2c3e50;
+}
+
+.top-bar {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ecf0f1;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #34495e;
+}
+
+.menu-button.active {
+    -fx-background-color: #3498db;
+    -fx-font-weight: bold;
+}
+
+.menu-section {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 12px;
+}
+
+.user-profile {
+    -fx-background-color: #34495e;
+}
+
+.user-name {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.user-role {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 12px;
+}
+
+.logout-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #e74c3c;
+}
+
+.page-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.dashboard-content {
+    -fx-background-color: #f5f5f5;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-background-radius: 5;
+}
+
+.stat-label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-padding: 5 0 5 0;
+    -fx-text-fill: #7f8c8d;
 }
 
-/* Boutons */
-.button {
-    -fx-background-color: #4285f4;
-    -fx-text-fill: white;
-    -fx-padding: 8 15 8 15;
-    -fx-background-radius: 3;
+.stat-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
 }
 
-.button:hover {
-    -fx-background-color: #3275e4;
+.stat-value-warning {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f39c12;
 }
 
-.button:pressed {
-    -fx-background-color: #2265d4;
+.stat-value-info {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2ecc71;
 }
 
-/* Boutons d'action secondaires */
-.button.secondary {
-    -fx-background-color: #f0f0f0;
-    -fx-text-fill: #333333;
-    -fx-border-color: #dddddd;
+.stat-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #95a5a6;
 }
 
-.button.secondary:hover {
-    -fx-background-color: #e4e4e4;
-}
-
-/* Boutons d'alerte/suppression */
-.button.danger {
-    -fx-background-color: #db4437;
-    -fx-text-fill: white;
-}
-
-.button.danger:hover {
-    -fx-background-color: #c53929;
-}
-
-/* Champs texte */
-.text-field, .text-area, .combo-box {
+.activities-container {
     -fx-background-color: white;
-    -fx-border-color: #cccccc;
-    -fx-border-radius: 3;
-    -fx-padding: 8 10 8 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-background-radius: 5;
 }
 
-.text-field:focused, .text-area:focused, .combo-box:focused {
-    -fx-border-color: #4285f4;
+.activity-item {
+    -fx-border-color: transparent transparent #ecf0f1 transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
-/* TableView */
+.activity-highlight {
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
+}
+
+.activity-time {
+    -fx-font-size: 12px;
+    -fx-text-fill: #95a5a6;
+}
+
+/* Styles pour les tableaux */
 .table-view {
     -fx-background-color: white;
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: #ecf0f1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
 
 .table-view .column-header {
     -fx-background-color: #f5f5f5;
-    -fx-border-color: #e0e0e0;
     -fx-padding: 10 5 10 5;
 }
 
 .table-view .column-header-background .label {
+    -fx-text-fill: #7f8c8d;
     -fx-font-weight: bold;
 }
 
 .table-row-cell {
-    -fx-background-color: white;
-    -fx-border-color: transparent transparent #f0f0f0 transparent;
-}
-
-.table-row-cell:odd {
-    -fx-background-color: #fafafa;
+    -fx-border-color: transparent transparent #ecf0f1 transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #e8f0fe;
-    -fx-text-fill: #333333;
+    -fx-background-color: #3498db;
 }
 
-/* Formulaires */
+.table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+/* Styles pour les formulaires */
 .form-container {
-    -fx-spacing: 10;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-background-radius: 5;
     -fx-padding: 20;
+}
+
+.form-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
 }
 
 .form-field {
@@ -115,44 +243,46 @@
 
 .form-label {
     -fx-font-weight: bold;
+    -fx-text-fill: #7f8c8d;
 }
 
-/* Messages d'erreur */
-.error-label {
-    -fx-text-fill: #d32f2f;
-    -fx-font-size: 11px;
-}
-
-/* Barre de navigation/menu */
-.nav-menu {
-    -fx-background-color: #333333;
-    -fx-padding: 10;
-}
-
-.nav-button {
-    -fx-background-color: transparent;
+.form-button {
+    -fx-background-color: #3498db;
     -fx-text-fill: white;
-    -fx-padding: 10 15 10 15;
-    -fx-border-radius: 0;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
 }
 
-.nav-button:hover {
-    -fx-background-color: #444444;
+.form-button:hover {
+    -fx-background-color: #2980b9;
 }
 
-.nav-button.active {
-    -fx-background-color: #4285f4;
+.form-button.cancel {
+    -fx-background-color: #e74c3c;
 }
 
-/* Statuts de véhicule */
+.form-button.cancel:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Status indicators */
 .status-disponible {
-    -fx-text-fill: #0f9d58;
+    -fx-text-fill: #2ecc71;
 }
 
-.status-indisponible {
-    -fx-text-fill: #db4437;
+.status-en-mission {
+    -fx-text-fill: #3498db;
 }
 
-.status-maintenance {
-    -fx-text-fill: #f4b400;
+.status-hors-service {
+    -fx-text-fill: #e74c3c;
+}
+
+.status-en-entretien {
+    -fx-text-fill: #f39c12;
+}
+
+.status-attribue {
+    -fx-text-fill: #9b59b6;
 }

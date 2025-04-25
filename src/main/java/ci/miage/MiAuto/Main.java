@@ -15,8 +15,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            // Charger la vue principale
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("../../../../resources/fxml/vehicule/liste_vehicules.fxml"));
+            // Charger la vue de connexion (login)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../../resources/fxml/login.fxml"));
             Parent root = loader.load();
 
             // Configurer la scène
@@ -24,10 +24,10 @@ public class Main extends Application {
             scene.getStylesheets().add(getClass().getResource("../../../../resources/css/main.css").toExternalForm());
 
             // Configurer la fenêtre principale
-            primaryStage.setTitle("MiAuto - Gestion de Parc Automobile");
+            primaryStage.setTitle("MiAuto - Connexion");
             primaryStage.setScene(scene);
-            primaryStage.setMinWidth(800);
-            primaryStage.setMinHeight(600);
+            primaryStage.setMinWidth(700);
+            primaryStage.setMinHeight(500);
             primaryStage.show();
 
         } catch (Exception e) {

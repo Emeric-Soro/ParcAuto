@@ -52,4 +52,11 @@ public interface IEntretienDAO extends IBaseDAO<Entretien> {
      * @throws SQLException En cas d'erreur SQL
      */
     int deleteByVehicule(String idVehicule) throws SQLException;
+
+    /**
+     * Trouve tous les entretiens en cours (date d'entrée existe mais pas de date de sortie)
+     * @return Liste des entretiens en cours
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<Entretien> findEntretiensEnCours() throws SQLException;
 }

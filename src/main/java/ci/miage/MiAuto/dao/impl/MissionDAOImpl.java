@@ -4,85 +4,131 @@ import main.java.ci.miage.MiAuto.dao.interfaces.IMissionDAO;
 import main.java.ci.miage.MiAuto.models.Mission;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implémentation de l'interface DAO pour les missions
+ */
 public class MissionDAOImpl extends BaseDAOImpl<Mission> implements IMissionDAO {
 
+    /**
+     * Constructeur par défaut
+     */
     public MissionDAOImpl() {
         super();
     }
 
     @Override
     public Mission findById(int id) throws SQLException {
-        String query = "SELECT * FROM mission WHERE id_mission = ?";
+        String query = "SELECT * FROM mission WHERE ID_MISSION = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, id);
+
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return mapResultSetToEntity(rs);
+                if (rs.next()) {
+                    return mapResultSetToEntity(rs);
+                }
             }
         }
+
         return null;
     }
 
     @Override
     public List<Mission> findAll() throws SQLException {
         List<Mission> missions = new ArrayList<>();
-        String query = "SELECT * FROM mission";
+        String query = "SELECT * FROM mission ORDER BY DATE_DEBUT_MISSION DESC";
+
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) missions.add(mapResultSetToEntity(rs));
+
+            while (rs.next()) {
+                missions.add(mapResultSetToEntity(rs));
+            }
         }
+
         return missions;
     }
 
     @Override
-    public Mission save(Mission m) throws SQLException {
-        String query = "INSERT INTO mission (titre, description, date_debut, date_fin, lieu, id_personnel, id_vehicule, etat) " +
+    public Mission save(Mission mission) throws SQLException {
+        String query = "INSERT INTO mission (ID_VEHICULE, LIB_MISSION, DATE_DEBUT_MISSION, DATE_FIN_MISSION, COUT_MISSION, COUT_CARBURANT, OBSERVATION_MISSION, CIRCUIT_MISSION) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, m.getTitre());
-            stmt.setString(2, m.getDescription());
-            stmt.setTimestamp(3, Timestamp.valueOf(m.getDateDebutMission()));
-            stmt.setTimestamp(4, Timestamp.valueOf(m.getDateFinMission()));
-            stmt.setString(5, m.getLieu());
-            stmt.setInt(6, m.getIdPersonnel());
-            stmt.setInt(7, m.getIdVehicule());
-            stmt.setString(8, m.getEtat());
+            stmt.setInt(1, mission.getIdVehicule());
+            stmt.setString(2, mission.getLibMission());
 
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet keys = stmt.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        m.setIdMission(keys.getInt(1));
-                        return m;
+            if (mission.getDateDebutMission() != null) {
+                stmt.setTimestamp(3, Timestamp.valueOf(mission.getDateDebutMission()));
+            } else {
+                stmt.setNull(3, Types.TIMESTAMP);
+            }
+
+            if (mission.getDateFinMission() != null) {
+                stmt.setTimestamp(4, Timestamp.valueOf(mission.getDateFinMission()));
+            } else {
+                stmt.setNull(4, Types.TIMESTAMP);
+            }
+
+            stmt.setDouble(5, mission.getCoutMission());
+            stmt.setDouble(6, mission.getCoutCarburant());
+            stmt.setString(7, mission.getObservationMission());
+            stmt.setString(8, mission.getCircuitMission());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        mission.setIdMission(generatedKeys.getInt(1));
+                        return mission;
                     }
                 }
             }
         }
+
         return null;
     }
 
     @Override
-    public boolean update(Mission m) throws SQLException {
-        String query = "UPDATE mission SET titre = ?, description = ?, date_debut = ?, date_fin = ?, lieu = ?, id_personnel = ?, id_vehicule = ?, etat = ? " +
-                "WHERE id_mission = ?";
+    public boolean update(Mission mission) throws SQLException {
+        String query = "UPDATE mission SET ID_VEHICULE = ?, LIB_MISSION = ?, DATE_DEBUT_MISSION = ?, " +
+                "DATE_FIN_MISSION = ?, COUT_MISSION = ?, COUT_CARBURANT = ?, " +
+                "OBSERVATION_MISSION = ?, CIRCUIT_MISSION = ? WHERE ID_MISSION = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, m.getTitre());
-            stmt.setString(2, m.getDescription());
-            stmt.setTimestamp(3, Timestamp.valueOf(m.getDateDebut()));
-            stmt.setTimestamp(4, Timestamp.valueOf(m.getDateFin()));
-            stmt.setString(5, m.getLieu());
-            stmt.setInt(6, m.getIdPersonnel());
-            stmt.setInt(7, m.getIdVehicule());
-            stmt.setString(8, m.getEtat());
-            stmt.setInt(9, m.getIdMission());
+            stmt.setInt(1, mission.getIdVehicule());
+            stmt.setString(2, mission.getLibMission());
+
+            if (mission.getDateDebutMission() != null) {
+                stmt.setTimestamp(3, Timestamp.valueOf(mission.getDateDebutMission()));
+            } else {
+                stmt.setNull(3, Types.TIMESTAMP);
+            }
+
+            if (mission.getDateFinMission() != null) {
+                stmt.setTimestamp(4, Timestamp.valueOf(mission.getDateFinMission()));
+            } else {
+                stmt.setNull(4, Types.TIMESTAMP);
+            }
+
+            stmt.setDouble(5, mission.getCoutMission());
+            stmt.setDouble(6, mission.getCoutCarburant());
+            stmt.setString(7, mission.getObservationMission());
+            stmt.setString(8, mission.getCircuitMission());
+            stmt.setInt(9, mission.getIdMission());
 
             return stmt.executeUpdate() > 0;
         }
@@ -90,26 +136,173 @@ public class MissionDAOImpl extends BaseDAOImpl<Mission> implements IMissionDAO 
 
     @Override
     public boolean delete(int id) throws SQLException {
-        String query = "DELETE FROM mission WHERE id_mission = ?";
+        String query = "DELETE FROM mission WHERE ID_MISSION = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, id);
+
             return stmt.executeUpdate() > 0;
         }
     }
 
     @Override
+    public List<Mission> findByVehicule(String idVehicule) throws SQLException {
+        List<Mission> missions = new ArrayList<>();
+        int vehiculeId = Integer.parseInt(idVehicule);
+
+        String query = "SELECT * FROM mission WHERE ID_VEHICULE = ? ORDER BY DATE_DEBUT_MISSION DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, vehiculeId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    missions.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return missions;
+    }
+
+    @Override
+    public List<Mission> findByPersonnel(String idPersonnel) throws SQLException {
+        List<Mission> missions = new ArrayList<>();
+        int personnelId = Integer.parseInt(idPersonnel);
+
+        String query = "SELECT m.* FROM mission m " +
+                "JOIN participer p ON m.ID_MISSION = p.ID_MISSION " +
+                "WHERE p.ID_PERSONNEL = ? ORDER BY m.DATE_DEBUT_MISSION DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, personnelId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    missions.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return missions;
+    }
+
+    @Override
+    public List<Mission> findBetweenDates(LocalDate debut, LocalDate fin) throws SQLException {
+        List<Mission> missions = new ArrayList<>();
+
+        String query = "SELECT * FROM mission " +
+                "WHERE (DATE(DATE_DEBUT_MISSION) BETWEEN ? AND ?) OR " +
+                "(DATE(DATE_FIN_MISSION) BETWEEN ? AND ?) OR " +
+                "(DATE_DEBUT_MISSION <= ? AND DATE_FIN_MISSION >= ?) " +
+                "ORDER BY DATE_DEBUT_MISSION";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            java.sql.Date sqlDebut = java.sql.Date.valueOf(debut);
+            java.sql.Date sqlFin = java.sql.Date.valueOf(fin);
+
+            stmt.setDate(1, sqlDebut);
+            stmt.setDate(2, sqlFin);
+            stmt.setDate(3, sqlDebut);
+            stmt.setDate(4, sqlFin);
+            stmt.setDate(5, sqlDebut);
+            stmt.setDate(6, sqlFin);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    missions.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return missions;
+    }
+
+    @Override
+    public boolean updateEtat(String idMission, String nouvelEtat) throws SQLException {
+        // Note: Dans votre modèle actuel, il n'y a pas de colonne d'état pour les missions
+        // Si vous souhaitez ajouter cette fonctionnalité, vous devriez d'abord modifier votre schéma de base de données
+        // Pour l'instant, cette méthode retourne false
+        return false;
+    }
+
+    @Override
+    public int deleteByVehicule(String idVehicule) throws SQLException {
+        int vehiculeId = Integer.parseInt(idVehicule);
+        String query = "DELETE FROM mission WHERE ID_VEHICULE = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, vehiculeId);
+
+            return stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Recherche les missions en cours à une date donnée
+     *
+     * @param date Date de référence
+     * @return Liste des missions en cours à cette date
+     * @throws SQLException En cas d'erreur SQL
+     */
+    @Override
+    public List<Mission> findMissionsEnCours(LocalDateTime date) throws SQLException {
+        List<Mission> missions = new ArrayList<>();
+
+        String query = "SELECT * FROM mission " +
+                "WHERE DATE_DEBUT_MISSION <= ? AND (DATE_FIN_MISSION >= ? OR DATE_FIN_MISSION IS NULL)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            Timestamp timestamp = Timestamp.valueOf(date);
+
+            stmt.setTimestamp(1, timestamp);
+            stmt.setTimestamp(2, timestamp);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    missions.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return missions;
+    }
+
+    @Override
     protected Mission mapResultSetToEntity(ResultSet rs) throws SQLException {
-        Mission m = new Mission();
-        m.setIdMission(rs.getInt("id_mission"));
-        m.setTitre(rs.getString("titre"));
-        m.setDescription(rs.getString("description"));
-        m.setDateDebut(rs.getTimestamp("date_debut").toLocalDateTime());
-        m.setDateFin(rs.getTimestamp("date_fin").toLocalDateTime());
-        m.setLieu(rs.getString("lieu"));
-        m.setIdPersonnel(rs.getInt("id_personnel"));
-        m.setIdVehicule(rs.getInt("id_vehicule"));
-        m.setEtat(rs.getString("etat"));
-        return m;
+        Mission mission = new Mission();
+
+        mission.setIdMission(rs.getInt("ID_MISSION"));
+        mission.setIdVehicule(rs.getInt("ID_VEHICULE"));
+        mission.setLibMission(rs.getString("LIB_MISSION"));
+
+        Timestamp dateDebut = rs.getTimestamp("DATE_DEBUT_MISSION");
+        if (dateDebut != null) {
+            mission.setDateDebutMission(dateDebut.toLocalDateTime());
+        }
+
+        Timestamp dateFin = rs.getTimestamp("DATE_FIN_MISSION");
+        if (dateFin != null) {
+            mission.setDateFinMission(dateFin.toLocalDateTime());
+        }
+
+        mission.setCoutMission(rs.getInt("COUT_MISSION"));
+        mission.setCoutCarburant(rs.getInt("COUT_CARBURANT"));
+        mission.setObservationMission(rs.getString("OBSERVATION_MISSION"));
+        mission.setCircuitMission(rs.getString("CIRCUIT_MISSION"));
+
+        return mission;
     }
 }

@@ -4,6 +4,7 @@ import main.java.ci.miage.MiAuto.models.Mission;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -52,4 +53,12 @@ public interface IMissionDAO extends IBaseDAO<Mission> {
      * @throws SQLException En cas d'erreur SQL
      */
     int deleteByVehicule(String idVehicule) throws SQLException;
+
+    /**
+     * Recherche les missions en cours à une date donnée
+     * @param date Date de référence
+     * @return Liste des missions en cours à cette date
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<Mission> findMissionsEnCours(LocalDateTime date) throws SQLException;
 }
