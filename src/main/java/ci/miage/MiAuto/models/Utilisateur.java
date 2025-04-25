@@ -136,4 +136,5 @@ public class Utilisateur {
     public String toString() {
         return login + " (" + (role != null ? role.getNomRole() : "Rôle inconnu") + ")";
     }
+
 }

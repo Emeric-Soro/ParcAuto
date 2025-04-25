@@ -70,4 +70,6 @@ public class Assurance {
                 ", coutAssurance=" + coutAssurance +
                 '}';
     }
+
+
 }
