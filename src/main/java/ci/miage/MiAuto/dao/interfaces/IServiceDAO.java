@@ -50,4 +50,6 @@ public interface IServiceDAO extends IBaseDAO<Service> {
      * @throws SQLException En cas d'erreur SQL
      */
     List<String> findPersonnelsByService(String idService) throws SQLException;
+
+    boolean updateLibelle(int id, String nouveauLibelle) throws SQLException;
 }

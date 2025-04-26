@@ -67,17 +67,19 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
 
     @Override
     public boolean update(Personnel p) throws SQLException {
-        String query = "UPDATE personnel SET nom = ?, prenom = ?, genre = ?, telephone = ?, email = ?, id_fonction = ?, id_service = ? WHERE id_personnel = ?";
+        String query = "UPDATE personnel SET nom_personnel = ?, prenom_personnel = ?, ContactPersonnel = ?, DateAttribution = ?, EmailPersonnel = ?, AdressePersonnel = ?, DateEmbauche = ?, id_fonction = ?, id_service = ? WHERE id_personnel = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, p.getNomPersonnel());
             stmt.setString(2, p.getPrenomPersonnel());
-            stmt.setString(3, p.getGenrePersonnel());
-            stmt.setString(4, p.getContactPersonnel());
+            stmt.setString(3, p.getContactPersonnel());
+            stmt.setString(4, String.valueOf(p.getDateAttribution()));
             stmt.setString(5, p.getEmailPersonnel());
-            stmt.setInt(6, p.getIdFonction());
-            stmt.setInt(7, p.getIdService());
-            stmt.setInt(8, p.getIdPersonnel());
+            stmt.setString(6, p.getAdressePersonnel());
+            stmt.setString( 7, String.valueOf(p.getDateEmbauche()));
+            stmt.setInt(8, p.getIdFonction());
+            stmt.setInt(9, p.getIdService());
+            stmt.setInt(10, p.getIdPersonnel());
 
             return stmt.executeUpdate() > 0;
         }
@@ -97,13 +99,38 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
     protected Personnel mapResultSetToEntity(ResultSet rs) throws SQLException {
         Personnel p = new Personnel();
         p.setIdPersonnel(rs.getInt("id_personnel"));
-        p.setNom(rs.getString("nom"));
-        p.setPrenom(rs.getString("prenom"));
-        p.setGenre(rs.getString("genre"));
-        p.setTelephone(rs.getString("telephone"));
-        p.setEmail(rs.getString("email"));
+        p.setNomPersonnel(rs.getString("nom"));
+        p.setPrenomPersonnel(rs.getString("prenom"));
+        p.setGenrePersonnel(rs.getString("genre"));
+        p.setContactPersonnel(rs.getString("telephone"));
+        p.setEmailPersonnel(rs.getString("email"));
         p.setIdFonction(rs.getInt("id_fonction"));
         p.setIdService(rs.getInt("id_service"));
         return p;
+    }
+
+    @Override
+    public Personnel findByEmail(String email) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public List<Personnel> findByFonction(String idFonction) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public List<Personnel> findByService(String idService) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public boolean updateService(String idPersonnel, String idNouveauService) throws SQLException {
+        return false;
     }
 }

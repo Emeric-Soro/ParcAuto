@@ -43,6 +43,8 @@ public interface IRoleDAO extends IBaseDAO<Role> {
      */
     boolean updateLibelle(String id, String nouveauLibelle) throws SQLException;
 
+    boolean updateLibelle(int id, String nouveauLibelle) throws SQLException;
+
     /**
      * Récupère tous les privilèges associés à un rôle donné
      * @param idRole ID du rôle

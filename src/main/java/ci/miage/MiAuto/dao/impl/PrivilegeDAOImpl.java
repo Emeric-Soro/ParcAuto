@@ -40,10 +40,11 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
 
     @Override
     public Privilege save(Privilege p) throws SQLException {
-        String query = "INSERT INTO privilege (libelle_privilege) VALUES (?)";
+        String query = "INSERT INTO privilege (nom_privilege, description) VALUES (?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, p.getLibellePrivilege());
+            stmt.setString(1, p.getNomPrivilege());
+            stmt.setString(2,p.getDescription());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -60,11 +61,12 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
 
     @Override
     public boolean update(Privilege p) throws SQLException {
-        String query = "UPDATE privilege SET libelle_privilege = ? WHERE id_privilege = ?";
+        String query = "UPDATE privilege SET nom_privilege = ?, description = ?  WHERE id_privilege = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, p.getLibellePrivilege());
-            stmt.setInt(2, p.getIdPrivilege());
+            stmt.setString(1, p.getNomPrivilege());
+            stmt.setString(2,p.getDescription());
+            stmt.setInt(3, p.getIdPrivilege());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -81,7 +83,7 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
 
     @Override
     public Privilege findByLibelle(String libelle) throws SQLException {
-        String query = "SELECT * FROM privilege WHERE LOWER(libelle_privilege) = LOWER(?)";
+        String query = "SELECT * FROM privilege WHERE LOWER(nom_privilege) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -94,7 +96,7 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
 
     @Override
     public boolean existsByLibelle(String libelle) throws SQLException {
-        String query = "SELECT COUNT(*) FROM privilege WHERE LOWER(libelle_privilege) = LOWER(?)";
+        String query = "SELECT COUNT(*) FROM privilege WHERE LOWER(nom_privilege) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -105,7 +107,7 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
 
     @Override
     public boolean deleteByLibelle(String libelle) throws SQLException {
-        String query = "DELETE FROM privilege WHERE LOWER(libelle_privilege) = LOWER(?)";
+        String query = "DELETE FROM privilege WHERE LOWER(nom_privilege) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -114,8 +116,13 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
     }
 
     @Override
+    public boolean updateLibelle(String idPrivilege, String nouveauLibelle) throws SQLException {
+        return false;
+    }
+
+    @Override
     public boolean updateLibelle(int id, String nouveauLibelle) throws SQLException {
-        String query = "UPDATE privilege SET libelle_privilege = ? WHERE id_privilege = ?";
+        String query = "UPDATE privilege SET nom_privilege = ? WHERE id_privilege = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, nouveauLibelle);
@@ -128,7 +135,8 @@ public class PrivilegeDAOImpl extends BaseDAOImpl<Privilege> implements IPrivile
     protected Privilege mapResultSetToEntity(ResultSet rs) throws SQLException {
         Privilege p = new Privilege();
         p.setIdPrivilege(rs.getInt("id_privilege"));
-        p.setLibellePrivilege(rs.getString("libelle_privilege"));
+        p.setNomPrivilege(rs.getString("nom_privilege"));
+        p.setDescription(rs.getString("description"));
         return p;
     }
 }

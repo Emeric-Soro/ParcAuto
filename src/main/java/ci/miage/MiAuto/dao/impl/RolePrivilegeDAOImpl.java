@@ -58,6 +58,31 @@ public class RolePrivilegeDAOImpl extends BaseDAOImpl<RolePrivilege> implements 
     }
 
     @Override
+    public boolean addPrivilegeToRole(String idRole, String idPrivilege) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public boolean removePrivilegeFromRole(String idRole, String idPrivilege) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public int removeAllPrivilegesFromRole(String idRole) throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public List<String> findPrivilegesIdsByRole(String idRole) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public boolean exists(String idRole, String idPrivilege) throws SQLException {
+        return false;
+    }
+
+    @Override
     public boolean deleteByRoleAndPrivilege(int idRole, int idPrivilege) throws SQLException {
         String query = "DELETE FROM role_privilege WHERE id_role = ? AND id_privilege = ?";
         try (Connection conn = getConnection();

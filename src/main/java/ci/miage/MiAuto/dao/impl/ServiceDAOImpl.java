@@ -43,7 +43,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
         String query = "INSERT INTO service (nom_service) VALUES (?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, s.getNomService());
+            stmt.setString(1, s.getLibelleService());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -60,10 +60,10 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public boolean update(Service s) throws SQLException {
-        String query = "UPDATE service SET nom_service = ? WHERE id_service = ?";
+        String query = "UPDATE service SET libelle_service = ? WHERE id_service = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, s.getNomService());
+            stmt.setString(1, s.getLibelleService());
             stmt.setInt(2, s.getIdService());
             return stmt.executeUpdate() > 0;
         }
@@ -104,6 +104,11 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
     }
 
     @Override
+    public boolean updateLibelle(String id, String nouveauLibelle) throws SQLException {
+        return false;
+    }
+
+    @Override
     public boolean deleteByLibelle(String libelle) throws SQLException {
         String query = "DELETE FROM service WHERE LOWER(nom_service) = LOWER(?)";
         try (Connection conn = getConnection();
@@ -114,8 +119,13 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
     }
 
     @Override
+    public List<String> findPersonnelsByService(String idService) throws SQLException {
+        return List.of();
+    }
+
+    @Override
     public boolean updateLibelle(int id, String nouveauLibelle) throws SQLException {
-        String query = "UPDATE service SET nom_service = ? WHERE id_service = ?";
+        String query = "UPDATE service SET liibelle_service = ? WHERE id_service = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, nouveauLibelle);
@@ -128,7 +138,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
     protected Service mapResultSetToEntity(ResultSet rs) throws SQLException {
         Service s = new Service();
         s.setIdService(rs.getInt("id_service"));
-        s.setNomService(rs.getString("nom_service"));
+        s.setLibelleService(rs.getString("libelle_service"));
         return s;
     }
 }

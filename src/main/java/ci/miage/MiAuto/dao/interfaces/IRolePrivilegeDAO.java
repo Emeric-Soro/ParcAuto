@@ -1,5 +1,7 @@
 package main.java.ci.miage.MiAuto.dao.interfaces;
 
+import main.java.ci.miage.MiAuto.models.RolePrivilege;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -50,4 +52,10 @@ public interface IRolePrivilegeDAO {
      * @throws SQLException En cas d'erreur SQL
      */
     boolean exists(String idRole, String idPrivilege) throws SQLException;
+
+    boolean deleteByRoleAndPrivilege(int idRole, int idPrivilege) throws SQLException;
+
+    List<RolePrivilege> findByRole(int idRole) throws SQLException;
+
+    List<RolePrivilege> findByPrivilege(int idPrivilege) throws SQLException;
 }

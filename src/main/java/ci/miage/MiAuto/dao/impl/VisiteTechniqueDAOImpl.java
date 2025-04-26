@@ -41,13 +41,13 @@ public class VisiteTechniqueDAOImpl extends BaseDAOImpl<VisiteTechnique> impleme
 
     @Override
     public VisiteTechnique save(VisiteTechnique v) throws SQLException {
-        String query = "INSERT INTO visite_technique (id_vehicule, date_visite, date_expiration, centre) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO visite_technique (id_vehicule, date_visite, date_expiration, centre_visite) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, v.getIdVehicule());
-            stmt.setDate(2, Date.valueOf(v.getDateVisite()));
-            stmt.setDate(3, Date.valueOf(v.getDateExpiration()));
-            stmt.setString(4, v.getCentre());
+            stmt.setDate(2, Date.valueOf(String.valueOf(v.getDateVisite())));
+            stmt.setDate(3, Date.valueOf(String.valueOf(v.getDateExpiration())));
+            stmt.setString(4, v.getCentreVisite());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -64,12 +64,12 @@ public class VisiteTechniqueDAOImpl extends BaseDAOImpl<VisiteTechnique> impleme
 
     @Override
     public boolean update(VisiteTechnique v) throws SQLException {
-        String query = "UPDATE visite_technique SET date_visite = ?, date_expiration = ?, centre = ? WHERE id_visite = ?";
+        String query = "UPDATE visite_technique SET date_visite = ?, date_expiration = ?, centre_visite = ? WHERE id_visite = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setDate(1, Date.valueOf(v.getDateVisite()));
-            stmt.setDate(2, Date.valueOf(v.getDateExpiration()));
-            stmt.setString(3, v.getCentre());
+            stmt.setDate(1, Date.valueOf(String.valueOf(v.getDateVisite())));
+            stmt.setDate(2, Date.valueOf(String.valueOf(v.getDateExpiration())));
+            stmt.setString(3, v.getCentreVisite());
             stmt.setInt(4, v.getIdVisite());
             return stmt.executeUpdate() > 0;
         }
@@ -90,9 +90,29 @@ public class VisiteTechniqueDAOImpl extends BaseDAOImpl<VisiteTechnique> impleme
         VisiteTechnique v = new VisiteTechnique();
         v.setIdVisite(rs.getInt("id_visite"));
         v.setIdVehicule(rs.getInt("id_vehicule"));
-        v.setDateVisite(rs.getDate("date_visite").toLocalDate());
-        v.setDateExpiration(rs.getDate("date_expiration").toLocalDate());
-        v.setCentre(rs.getString("centre"));
+        v.setDateVisite(rs.getDate("date_visite").toLocalDate().atStartOfDay());
+        v.setDateExpiration(rs.getDate("date_expiration").toLocalDate().atStartOfDay());
+        v.setCentreVisite(rs.getString("centre"));
         return v;
+    }
+
+    @Override
+    public List<VisiteTechnique> findByVehicule(String idVehicule) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public List<VisiteTechnique> findProchainesEcheances(int joursAvantExpiration) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public List<VisiteTechnique> findBetweenDates(LocalDate debut, LocalDate fin) throws SQLException {
+        return List.of();
+    }
+
+    @Override
+    public int deleteByVehicule(String idVehicule) throws SQLException {
+        return 0;
     }
 }

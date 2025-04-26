@@ -113,6 +113,11 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
     }
 
     @Override
+    public boolean updateLibelle(String id, String nouveauLibelle) throws SQLException {
+        return false;
+    }
+
+    @Override
     public boolean updateLibelle(int id, String nouveauLibelle) throws SQLException {
         String query = "UPDATE role SET nom_role = ? WHERE id_role = ?";
         try (Connection conn = getConnection();
@@ -126,7 +131,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
     @Override
     public List<String> findPrivilegesByRole(String idRole) throws SQLException {
         List<String> privileges = new ArrayList<>();
-        String query = "SELECT p.libelle_privilege FROM role_privilege rp " +
+        String query = "SELECT p.nom_privilege FROM role_privilege rp " +
                 "JOIN privilege p ON rp.id_privilege = p.id_privilege " +
                 "WHERE rp.id_role = ?";
         try (Connection conn = getConnection();
@@ -134,7 +139,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
             stmt.setInt(1, Integer.parseInt(idRole));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    privileges.add(rs.getString("libelle_privilege"));
+                    privileges.add(rs.getString("nom_privilege"));
                 }
             }
         }

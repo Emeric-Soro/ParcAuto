@@ -42,4 +42,6 @@ public interface IPrivilegeDAO extends IBaseDAO<Privilege> {
      * @throws SQLException En cas d’erreur SQL
      */
     boolean updateLibelle(String idPrivilege, String nouveauLibelle) throws SQLException;
+
+    boolean updateLibelle(int id, String nouveauLibelle) throws SQLException;
 }
