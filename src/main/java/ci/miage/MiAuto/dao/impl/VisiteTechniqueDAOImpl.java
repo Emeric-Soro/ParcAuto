@@ -47,6 +47,7 @@ public class VisiteTechniqueDAOImpl extends BaseDAOImpl<VisiteTechnique> impleme
             stmt.setInt(1, v.getIdVehicule());
             stmt.setDate(2, Date.valueOf(String.valueOf(v.getDateVisite())));
             stmt.setDate(3, Date.valueOf(String.valueOf(v.getDateExpiration())));
+
             stmt.setString(4, v.getCentreVisite());
 
             int rows = stmt.executeUpdate();

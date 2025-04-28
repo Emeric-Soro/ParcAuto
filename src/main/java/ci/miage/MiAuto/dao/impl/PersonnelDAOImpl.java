@@ -4,6 +4,7 @@ import main.java.ci.miage.MiAuto.dao.interfaces.IPersonnelDAO;
 import main.java.ci.miage.MiAuto.models.Personnel;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,15 +41,17 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
 
     @Override
     public Personnel save(Personnel p) throws SQLException {
-        String query = "INSERT INTO personnel (nom, prenom, genre, telephone, email, id_fonction, id_service) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO personnel (nom_personnel, prenom_personnel, contact_personnel, date_attribution, email_personnel, adresse_personnel, date_embauche, id_fonction, id_service) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, p.getNomPersonnel());
             stmt.setString(2, p.getPrenomPersonnel());
-            stmt.setString(3, p.getGenrePersonnel());
-            stmt.setString(4, p.getContactPersonnel());
+            stmt.setString(3, p.getContactPersonnel());
+            stmt.setString(4, String.valueOf(p.getDateAttribution()));
             stmt.setString(5, p.getEmailPersonnel());
+            stmt.setString(6, p.getEmailPersonnel());
+            stmt.setString( 7, String.valueOf(p.getDateEmbauche()));
             stmt.setInt(6, p.getIdFonction());
             stmt.setInt(7, p.getIdService());
 
@@ -101,9 +104,11 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
         p.setIdPersonnel(rs.getInt("id_personnel"));
         p.setNomPersonnel(rs.getString("nom"));
         p.setPrenomPersonnel(rs.getString("prenom"));
-        p.setGenrePersonnel(rs.getString("genre"));
         p.setContactPersonnel(rs.getString("telephone"));
+        p.setDateAttribution(LocalDateTime.parse(rs.getString("date_attribution")));
         p.setEmailPersonnel(rs.getString("email"));
+        p.setAdressePersonnel(rs.getString("adresse_personnel"));
+        p.setDateEmbauche(LocalDateTime.parse(rs.getString("date_embauche")));
         p.setIdFonction(rs.getInt("id_fonction"));
         p.setIdService(rs.getInt("id_service"));
         return p;

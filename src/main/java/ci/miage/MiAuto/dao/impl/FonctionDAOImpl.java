@@ -40,7 +40,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public Fonction save(Fonction f) throws SQLException {
-        String query = "INSERT INTO fonction (nom_fonction) VALUES (?)";
+        String query = "INSERT INTO fonction (lib_fonction) VALUES (?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, f.getLibelleFonction());
@@ -59,7 +59,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public boolean update(Fonction f) throws SQLException {
-        String query = "UPDATE fonction SET nom_fonction = ? WHERE id_fonction = ?";
+        String query = "UPDATE fonction SET lib_fonction = ? WHERE id_fonction = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, f.getLibelleFonction());
@@ -80,7 +80,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public Fonction findByLibelle(String libelle) throws SQLException {
-        String query = "SELECT * FROM fonction WHERE LOWER(nom_fonction) = LOWER(?)";
+        String query = "SELECT * FROM fonction WHERE LOWER(lib_fonction) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -93,7 +93,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public boolean existsByLibelle(String libelle) throws SQLException {
-        String query = "SELECT COUNT(*) FROM fonction WHERE LOWER(nom_fonction) = LOWER(?)";
+        String query = "SELECT COUNT(*) FROM fonction WHERE LOWER(lib_fonction) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -104,7 +104,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public boolean deleteByLibelle(String libelle) throws SQLException {
-        String query = "DELETE FROM fonction WHERE LOWER(nom_fonction) = LOWER(?)";
+        String query = "DELETE FROM fonction WHERE LOWER(lib_fonction) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -119,7 +119,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
 
     @Override
     public boolean updateLibelle(int id, String nouveauLibelle) throws SQLException {
-        String query = "UPDATE fonction SET nom_fonction = ? WHERE id_fonction = ?";
+        String query = "UPDATE fonction SET lib_fonction = ? WHERE id_fonction = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, nouveauLibelle);
@@ -132,7 +132,7 @@ public class FonctionDAOImpl extends BaseDAOImpl<Fonction> implements IFonctionD
     protected Fonction mapResultSetToEntity(ResultSet rs) throws SQLException {
         Fonction f = new Fonction();
         f.setIdFonction(rs.getInt("id_fonction"));
-        f.setLibelleFonction(rs.getString("nom_fonction"));
+        f.setLibelleFonction(rs.getString("lib_fonction"));
         return f;
     }
 }

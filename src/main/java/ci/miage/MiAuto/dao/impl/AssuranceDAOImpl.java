@@ -48,7 +48,7 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
             stmt.setString(2, a.getAgence());
             stmt.setDate(3, Date.valueOf(String.valueOf(a.getDateDebutAssurance())));
             stmt.setDate(4, Date.valueOf(String.valueOf(a.getDateFinAssurance())));
-            stmt.setInt(5, a.getIdVehicule());
+            stmt.setInt(5, a.getCoutAssurance());
 
             int rows = stmt.executeUpdate();
             return rows > 0 ? a : null;
@@ -63,7 +63,7 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
             stmt.setString(1, a.getAgence());
             stmt.setDate(2, Date.valueOf(String.valueOf(a.getDateDebutAssurance())));
             stmt.setDate(3, Date.valueOf(String.valueOf(a.getDateFinAssurance())));
-            stmt.setInt(4, a.getIdVehicule());
+            stmt.setInt(4, a.getCoutAssurance());
             stmt.setInt(5, a.getNumCarteAssurance());
             return stmt.executeUpdate() > 0;
         }
@@ -86,7 +86,7 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
         a.setAgence(rs.getString("compagnie"));
         a.setDateDebutAssurance(rs.getDate("date_debut").toLocalDate().atStartOfDay());
         a.setDateFinAssurance(rs.getDate("date_fin").toLocalDate().atStartOfDay());
-        a.setIdVehicule(rs.getInt("id_vehicule"));
+        a.setCoutAssurance(rs.getInt("id_vehicule"));
         return a;
     }
 }

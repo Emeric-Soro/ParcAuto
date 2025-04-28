@@ -40,10 +40,11 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public Service save(Service s) throws SQLException {
-        String query = "INSERT INTO service (nom_service) VALUES (?)";
+        String query = "INSERT INTO service (lib_service, localisation_service) VALUES (?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, s.getLibelleService());
+            stmt.setString(2, s.getLocalisationService());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -60,11 +61,12 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public boolean update(Service s) throws SQLException {
-        String query = "UPDATE service SET libelle_service = ? WHERE id_service = ?";
+        String query = "UPDATE service SET lib_service = ?, localisation_service = ? WHERE id_service = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, s.getLibelleService());
-            stmt.setInt(2, s.getIdService());
+            stmt.setString(2, s.getLocalisationService());
+            stmt.setInt(3, s.getIdService());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -81,7 +83,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public Service findByLibelle(String libelle) throws SQLException {
-        String query = "SELECT * FROM service WHERE LOWER(nom_service) = LOWER(?)";
+        String query = "SELECT * FROM service WHERE LOWER(lib_service) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -94,7 +96,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public boolean existsByLibelle(String libelle) throws SQLException {
-        String query = "SELECT COUNT(*) FROM service WHERE LOWER(nom_service) = LOWER(?)";
+        String query = "SELECT COUNT(*) FROM service WHERE LOWER(lib_service) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -110,7 +112,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public boolean deleteByLibelle(String libelle) throws SQLException {
-        String query = "DELETE FROM service WHERE LOWER(nom_service) = LOWER(?)";
+        String query = "DELETE FROM service WHERE LOWER(lib_service) = LOWER(?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, libelle);
@@ -125,7 +127,7 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
 
     @Override
     public boolean updateLibelle(int id, String nouveauLibelle) throws SQLException {
-        String query = "UPDATE service SET liibelle_service = ? WHERE id_service = ?";
+        String query = "UPDATE service SET lib_service = ? WHERE id_service = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, nouveauLibelle);
@@ -138,7 +140,8 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
     protected Service mapResultSetToEntity(ResultSet rs) throws SQLException {
         Service s = new Service();
         s.setIdService(rs.getInt("id_service"));
-        s.setLibelleService(rs.getString("libelle_service"));
+        s.setLibelleService(rs.getString("lib_service"));
+        s.setLocalisationService(rs.getString("localisation_service"));
         return s;
     }
 }
