@@ -113,8 +113,9 @@ public class UtilisateurDAOImpl extends BaseDAOImpl<Utilisateur> implements IUti
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            if (utilisateur.getIdPersonnel() > 0) {
-                stmt.setInt(1, utilisateur.getIdPersonnel());
+            Integer idPersonnel = utilisateur.getIdPersonnel();
+            if (idPersonnel != null && idPersonnel != 0) {
+                stmt.setInt(1, idPersonnel);
             } else {
                 stmt.setNull(1, Types.INTEGER);
             }

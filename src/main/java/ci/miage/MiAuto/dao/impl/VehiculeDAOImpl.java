@@ -266,6 +266,32 @@ public class VehiculeDAOImpl extends BaseDAOImpl<Vehicule> implements IVehiculeD
 
         return etats;
     }
+    /**
+     * Récupère un état de véhicule par son ID
+     * @param idEtat ID de l'état
+     * @return L'état correspondant ou null si non trouvé
+     * @throws SQLException En cas d'erreur SQL
+     */
+    public EtatVoiture getEtatById(int idEtat) throws SQLException {
+        String query = "SELECT * FROM etat_voiture WHERE ID_ETAT_VOITURE = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, idEtat);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    EtatVoiture etat = new EtatVoiture();
+                    etat.setIdEtatVoiture(rs.getInt("ID_ETAT_VOITURE"));
+                    etat.setLibEtatVoiture(rs.getString("LIB_ETAT_VOITURE"));
+                    return etat;
+                }
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public List<Vehicule> findDisponibles() throws SQLException {

@@ -4,7 +4,7 @@ import main.java.ci.miage.MiAuto.dao.interfaces.IAssuranceDAO;
 import main.java.ci.miage.MiAuto.models.Assurance;
 
 import java.sql.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
 
     @Override
     public Assurance findById(int id) throws SQLException {
-        String query = "SELECT * FROM assurance WHERE num_carte_assurance = ?";
+        String query = "SELECT * FROM assurance WHERE NUM_CARTE_ASSURANCE = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, id);
@@ -41,37 +41,68 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
 
     @Override
     public Assurance save(Assurance a) throws SQLException {
-        String query = "INSERT INTO assurance (num_carte_assurance, compagnie, date_debut, date_fin, id_vehicule) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO assurance (DATE_DEBUT_ASSURANCE, DATE_FIN_ASSURANCE, AGENCE, COUT_ASSURANCE) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, a.getNumCarteAssurance());
-            stmt.setString(2, a.getAgence());
-            stmt.setDate(3, Date.valueOf(String.valueOf(a.getDateDebutAssurance())));
-            stmt.setDate(4, Date.valueOf(String.valueOf(a.getDateFinAssurance())));
-            stmt.setInt(5, a.getCoutAssurance());
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            if (a.getDateDebutAssurance() != null) {
+                stmt.setTimestamp(1, Timestamp.valueOf(a.getDateDebutAssurance()));
+            } else {
+                stmt.setNull(1, Types.TIMESTAMP);
+            }
+
+            if (a.getDateFinAssurance() != null) {
+                stmt.setTimestamp(2, Timestamp.valueOf(a.getDateFinAssurance()));
+            } else {
+                stmt.setNull(2, Types.TIMESTAMP);
+            }
+
+            stmt.setString(3, a.getAgence());
+            stmt.setInt(4, a.getCoutAssurance());
 
             int rows = stmt.executeUpdate();
-            return rows > 0 ? a : null;
+
+            if (rows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        a.setNumCarteAssurance(generatedKeys.getInt(1));
+                        return a;
+                    }
+                }
+            }
+            return null;
         }
     }
 
     @Override
     public boolean update(Assurance a) throws SQLException {
-        String query = "UPDATE assurance SET compagnie = ?, date_debut = ?, date_fin = ?, id_vehicule = ? WHERE num_carte_assurance = ?";
+        String query = "UPDATE assurance SET DATE_DEBUT_ASSURANCE = ?, DATE_FIN_ASSURANCE = ?, AGENCE = ?, COUT_ASSURANCE = ? WHERE NUM_CARTE_ASSURANCE = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, a.getAgence());
-            stmt.setDate(2, Date.valueOf(String.valueOf(a.getDateDebutAssurance())));
-            stmt.setDate(3, Date.valueOf(String.valueOf(a.getDateFinAssurance())));
+
+            if (a.getDateDebutAssurance() != null) {
+                stmt.setTimestamp(1, Timestamp.valueOf(a.getDateDebutAssurance()));
+            } else {
+                stmt.setNull(1, Types.TIMESTAMP);
+            }
+
+            if (a.getDateFinAssurance() != null) {
+                stmt.setTimestamp(2, Timestamp.valueOf(a.getDateFinAssurance()));
+            } else {
+                stmt.setNull(2, Types.TIMESTAMP);
+            }
+
+            stmt.setString(3, a.getAgence());
             stmt.setInt(4, a.getCoutAssurance());
             stmt.setInt(5, a.getNumCarteAssurance());
+
             return stmt.executeUpdate() > 0;
         }
     }
 
     @Override
     public boolean delete(int id) throws SQLException {
-        String query = "DELETE FROM assurance WHERE num_carte_assurance = ?";
+        String query = "DELETE FROM assurance WHERE NUM_CARTE_ASSURANCE = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, id);
@@ -82,11 +113,20 @@ public class AssuranceDAOImpl extends BaseDAOImpl<Assurance> implements IAssuran
     @Override
     protected Assurance mapResultSetToEntity(ResultSet rs) throws SQLException {
         Assurance a = new Assurance();
-        a.setNumCarteAssurance(rs.getInt("num_carte_assurance"));
-        a.setAgence(rs.getString("compagnie"));
-        a.setDateDebutAssurance(rs.getDate("date_debut").toLocalDate().atStartOfDay());
-        a.setDateFinAssurance(rs.getDate("date_fin").toLocalDate().atStartOfDay());
-        a.setCoutAssurance(rs.getInt("id_vehicule"));
+        a.setNumCarteAssurance(rs.getInt("NUM_CARTE_ASSURANCE"));
+        a.setAgence(rs.getString("AGENCE"));
+
+        Timestamp dateDebut = rs.getTimestamp("DATE_DEBUT_ASSURANCE");
+        if (dateDebut != null) {
+            a.setDateDebutAssurance(dateDebut.toLocalDateTime());
+        }
+
+        Timestamp dateFin = rs.getTimestamp("DATE_FIN_ASSURANCE");
+        if (dateFin != null) {
+            a.setDateFinAssurance(dateFin.toLocalDateTime());
+        }
+
+        a.setCoutAssurance(rs.getInt("COUT_ASSURANCE"));
         return a;
     }
 }

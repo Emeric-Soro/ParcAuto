@@ -49,7 +49,7 @@ public class AuthentificationService {
                 }
 
                 // Vérifier le mot de passe (le mot de passe en base est supposé être haché)
-                if (verifierMotDePasse(password, utilisateur.getMotDePasse())) {
+                if (password.equals(utilisateur.getMotDePasse())) {
                     // Mettre à jour la date de dernière connexion
                     utilisateur.setDerniereConnexion(LocalDateTime.now());
                     utilisateurDAO.update(utilisateur);

@@ -1,14 +1,16 @@
 package main.java.ci.miage.MiAuto.services;
 
-import main.java.ci.miage.MiAuto.config.DatabaseConnection;
+import main.java.ci.miage.MiAuto.dao.impl.ActiviteLogDAOImpl;
+import main.java.ci.miage.MiAuto.dao.impl.PersonnelDAOImpl;
 import main.java.ci.miage.MiAuto.dao.impl.VehiculeDAOImpl;
+import main.java.ci.miage.MiAuto.dao.interfaces.IActiviteLogDAO;
+import main.java.ci.miage.MiAuto.dao.interfaces.IPersonnelDAO;
 import main.java.ci.miage.MiAuto.dao.interfaces.IVehiculeDAO;
+import main.java.ci.miage.MiAuto.models.ActiviteLog;
 import main.java.ci.miage.MiAuto.models.EtatVoiture;
+import main.java.ci.miage.MiAuto.models.Personnel;
 import main.java.ci.miage.MiAuto.models.Vehicule;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,12 +23,16 @@ import java.util.Map;
 public class VehiculeService {
 
     private IVehiculeDAO vehiculeDAO;
+    private IPersonnelDAO personnelDAO;
+    private IActiviteLogDAO activiteLogDAO;
 
     /**
      * Constructeur par défaut
      */
     public VehiculeService() {
         this.vehiculeDAO = new VehiculeDAOImpl();
+        this.personnelDAO = new PersonnelDAOImpl();
+        this.activiteLogDAO = new ActiviteLogDAOImpl();
     }
 
     /**
@@ -35,6 +41,20 @@ public class VehiculeService {
      */
     public VehiculeService(IVehiculeDAO vehiculeDAO) {
         this.vehiculeDAO = vehiculeDAO;
+        this.personnelDAO = new PersonnelDAOImpl();
+        this.activiteLogDAO = new ActiviteLogDAOImpl();
+    }
+
+    /**
+     * Constructeur avec tous les DAOs injectés (utile pour les tests)
+     * @param vehiculeDAO DAO véhicule à utiliser
+     * @param personnelDAO DAO personnel à utiliser
+     * @param activiteLogDAO DAO activité log à utiliser
+     */
+    public VehiculeService(IVehiculeDAO vehiculeDAO, IPersonnelDAO personnelDAO, IActiviteLogDAO activiteLogDAO) {
+        this.vehiculeDAO = vehiculeDAO;
+        this.personnelDAO = personnelDAO;
+        this.activiteLogDAO = activiteLogDAO;
     }
 
     /**
@@ -77,7 +97,20 @@ public class VehiculeService {
                 vehicule.setDateEtat(LocalDateTime.now());
             }
 
-            return vehiculeDAO.save(vehicule);
+            Vehicule nouveauVehicule = vehiculeDAO.save(vehicule);
+
+            if (nouveauVehicule != null) {
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("CREATION");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(nouveauVehicule.getIdVehicule());
+                log.setDescription("Nouveau véhicule ajouté: " + nouveauVehicule.getMarque() + " "
+                        + nouveauVehicule.getModele() + " (" + nouveauVehicule.getImmatriculation() + ")");
+                activiteLogDAO.save(log);
+            }
+
+            return nouveauVehicule;
         } catch (SQLException e) {
             System.err.println("Erreur lors de l'ajout du véhicule: " + e.getMessage());
             return null;
@@ -91,7 +124,20 @@ public class VehiculeService {
      */
     public boolean updateVehicule(Vehicule vehicule) {
         try {
-            return vehiculeDAO.update(vehicule);
+            boolean updated = vehiculeDAO.update(vehicule);
+
+            if (updated) {
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("MODIFICATION");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(vehicule.getIdVehicule());
+                log.setDescription("Véhicule modifié: " + vehicule.getMarque() + " "
+                        + vehicule.getModele() + " (" + vehicule.getImmatriculation() + ")");
+                activiteLogDAO.save(log);
+            }
+
+            return updated;
         } catch (SQLException e) {
             System.err.println("Erreur lors de la mise à jour du véhicule: " + e.getMessage());
             return false;
@@ -105,7 +151,25 @@ public class VehiculeService {
      */
     public boolean deleteVehicule(int id) {
         try {
-            return vehiculeDAO.delete(id);
+            Vehicule vehicule = vehiculeDAO.findById(id);
+            if (vehicule == null) {
+                return false;
+            }
+
+            boolean deleted = vehiculeDAO.delete(id);
+
+            if (deleted) {
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("SUPPRESSION");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(id);
+                log.setDescription("Véhicule supprimé: " + vehicule.getMarque() + " "
+                        + vehicule.getModele() + " (" + vehicule.getImmatriculation() + ")");
+                activiteLogDAO.save(log);
+            }
+
+            return deleted;
         } catch (SQLException e) {
             System.err.println("Erreur lors de la suppression du véhicule: " + e.getMessage());
             return false;
@@ -131,10 +195,8 @@ public class VehiculeService {
      * @return Liste de tous les états
      */
     public List<EtatVoiture> getAllEtats() {
-        // Créez une interface et une implémentation pour EtatVoitureDAO
-        // Ou utilisez une requête directe si vous préférez
         try {
-            // Par exemple, en utilisant le VehiculeDAOImpl
+            // Utilisation du VehiculeDAOImpl
             return ((VehiculeDAOImpl)vehiculeDAO).getAllEtats();
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération des états: " + e.getMessage());
@@ -177,7 +239,47 @@ public class VehiculeService {
      */
     public boolean changeEtatVehicule(int idVehicule, int idEtatVoiture) {
         try {
-            return vehiculeDAO.updateEtat(idVehicule, idEtatVoiture);
+            Vehicule vehicule = vehiculeDAO.findById(idVehicule);
+            if (vehicule == null) {
+                return false;
+            }
+
+            String ancienEtat = "";
+            try {
+                EtatVoiture etatVoiture = ((VehiculeDAOImpl)vehiculeDAO).getEtatById(vehicule.getIdEtatVoiture());
+                if (etatVoiture != null) {
+                    ancienEtat = etatVoiture.getLibEtatVoiture();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erreur lors de la récupération de l'ancien état: " + e.getMessage());
+            }
+
+            boolean updated = vehiculeDAO.updateEtat(idVehicule, idEtatVoiture);
+
+            if (updated) {
+                // Récupérer le libellé du nouvel état
+                String nouvelEtat = "";
+                try {
+                    EtatVoiture etatVoiture = ((VehiculeDAOImpl)vehiculeDAO).getEtatById(idEtatVoiture);
+                    if (etatVoiture != null) {
+                        nouvelEtat = etatVoiture.getLibEtatVoiture();
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Erreur lors de la récupération du nouvel état: " + e.getMessage());
+                }
+
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("CHANGEMENT_ETAT");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(idVehicule);
+                log.setDescription("État du véhicule " + vehicule.getMarque() + " " + vehicule.getModele()
+                        + " (" + vehicule.getImmatriculation() + ") modifié de \""
+                        + ancienEtat + "\" à \"" + nouvelEtat + "\"");
+                activiteLogDAO.save(log);
+            }
+
+            return updated;
         } catch (SQLException e) {
             System.err.println("Erreur lors du changement d'état du véhicule: " + e.getMessage());
             return false;
@@ -233,7 +335,27 @@ public class VehiculeService {
      */
     public boolean updateKilometrageVehicule(int idVehicule, int kilometrage) {
         try {
-            return vehiculeDAO.updateKilometrage(idVehicule, kilometrage);
+            Vehicule vehicule = vehiculeDAO.findById(idVehicule);
+            if (vehicule == null) {
+                return false;
+            }
+
+            int ancienKilometrage = vehicule.getKilometrage();
+            boolean updated = vehiculeDAO.updateKilometrage(idVehicule, kilometrage);
+
+            if (updated) {
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("MISE_A_JOUR_KILOMETRAGE");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(idVehicule);
+                log.setDescription("Kilométrage du véhicule " + vehicule.getMarque() + " " + vehicule.getModele()
+                        + " (" + vehicule.getImmatriculation() + ") mis à jour de "
+                        + ancienKilometrage + " km à " + kilometrage + " km");
+                activiteLogDAO.save(log);
+            }
+
+            return updated;
         } catch (SQLException e) {
             System.err.println("Erreur lors de la mise à jour du kilométrage: " + e.getMessage());
             return false;
@@ -288,22 +410,90 @@ public class VehiculeService {
     }
 
     /**
-     * Permet d'attribuer un véhicule (changer son statut d'attribution)
+     * Permet d'attribuer un véhicule à un personnel
      * @param idVehicule ID du véhicule
-     * @param attribue true si le véhicule est attribué, false sinon
+     * @param idPersonnel ID du personnel (0 si on veut juste retirer l'attribution)
      * @return true si la mise à jour a réussi, false sinon
      */
-    public boolean attribuerVehicule(int idVehicule, boolean attribue) {
+    public boolean attribuerVehicule(int idVehicule, int idPersonnel) {
         try {
             Vehicule vehicule = vehiculeDAO.findById(idVehicule);
-            if (vehicule != null) {
-                vehicule.setStatutAttribution(attribue);
-                return vehiculeDAO.update(vehicule);
+            if (vehicule == null) {
+                return false;
             }
-            return false;
+
+            boolean attribue = idPersonnel > 0;
+            vehicule.setStatutAttribution(attribue);
+
+            // Si on attribue à un personnel
+            if (attribue) {
+                Personnel personnel = personnelDAO.findById(idPersonnel);
+                if (personnel == null) {
+                    return false;
+                }
+
+                // Mettre à jour l'attribut idVehicule dans le personnel
+                personnel.setIdVehicule(idVehicule);
+                personnel.setDateAttribution(LocalDateTime.now());
+                personnelDAO.update(personnel);
+
+                // Mettre à jour l'état du véhicule à "Attribué"
+                vehiculeDAO.updateEtat(idVehicule, 5); // 5 = Attribué
+
+                // Enregistrer l'activité
+                ActiviteLog log = new ActiviteLog();
+                log.setTypeActivite("ATTRIBUTION");
+                log.setTypeReference("VEHICULE");
+                log.setIdReference(idVehicule);
+                log.setDescription("Le véhicule " + vehicule.getMarque() + " " + vehicule.getModele() +
+                        " (" + vehicule.getImmatriculation() + ") a été attribué à " +
+                        personnel.getNomPersonnel() + " " + personnel.getPrenomPersonnel());
+                activiteLogDAO.save(log);
+            } else {
+                // Retirer l'attribution à tous les personnels ayant ce véhicule
+                List<Personnel> personnels = getAllPersonnelsWithVehicule(idVehicule);
+                for (Personnel p : personnels) {
+                    p.setIdVehicule(0);
+                    personnelDAO.update(p);
+
+                    // Enregistrer l'activité
+                    ActiviteLog log = new ActiviteLog();
+                    log.setTypeActivite("RETRAIT_ATTRIBUTION");
+                    log.setTypeReference("VEHICULE");
+                    log.setIdReference(idVehicule);
+                    log.setDescription("Le véhicule " + vehicule.getMarque() + " " + vehicule.getModele() +
+                            " (" + vehicule.getImmatriculation() + ") a été retiré à " +
+                            p.getNomPersonnel() + " " + p.getPrenomPersonnel());
+                    activiteLogDAO.save(log);
+                }
+
+                // Mettre à jour l'état du véhicule à "Disponible"
+                vehiculeDAO.updateEtat(idVehicule, 1); // 1 = Disponible
+            }
+
+            return vehiculeDAO.update(vehicule);
         } catch (SQLException e) {
             System.err.println("Erreur lors de l'attribution du véhicule: " + e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Récupère tous les personnels ayant un véhicule donné
+     * @param idVehicule ID du véhicule
+     * @return Liste des personnels ayant ce véhicule
+     * @throws SQLException En cas d'erreur SQL
+     */
+    private List<Personnel> getAllPersonnelsWithVehicule(int idVehicule) throws SQLException {
+        List<Personnel> result = new ArrayList<>();
+        List<Personnel> allPersonnels = personnelDAO.findAll();
+
+        for (Personnel p : allPersonnels) {
+            if (p.getIdVehicule() == idVehicule) {
+                result.add(p);
+            }
+        }
+
+        return result;
     }
 }
