@@ -5,51 +5,31 @@ import main.java.ci.miage.MiAuto.models.Role;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Interface DAO pour les opérations liées aux rôles
- */
 public interface IRoleDAO extends IBaseDAO<Role> {
 
     /**
-     * Recherche un rôle par son libellé
-     * @param libelle Libellé du rôle
-     * @return Le rôle correspondant ou null si inexistant
+     * Trouve un rôle par son nom
+     * @param nomRole Nom du rôle à rechercher
+     * @return Rôle correspondant ou null si non trouvé
      * @throws SQLException En cas d'erreur SQL
      */
-    Role findByLibelle(String libelle) throws SQLException;
+    Role findByName(String nomRole) throws SQLException;
 
     /**
-     * Vérifie l’existence d’un rôle
-     * @param libelle Libellé du rôle
-     * @return true si le rôle existe
-     * @throws SQLException En cas d'erreur SQL
-     */
-    boolean existsByLibelle(String libelle) throws SQLException;
-
-    /**
-     * Supprime un rôle par son libellé
-     * @param libelle Libellé du rôle à supprimer
-     * @return true si la suppression a été faite
-     * @throws SQLException En cas d'erreur SQL
-     */
-    boolean deleteByLibelle(String libelle) throws SQLException;
-
-    /**
-     * Met à jour le libellé d’un rôle
-     * @param id Identifiant du rôle
-     * @param nouveauLibelle Nouveau libellé
-     * @return true si la mise à jour a réussi
-     * @throws SQLException En cas d’erreur SQL
-     */
-    boolean updateLibelle(String id, String nouveauLibelle) throws SQLException;
-
-    boolean updateLibelle(int id, String nouveauLibelle) throws SQLException;
-
-    /**
-     * Récupère tous les privilèges associés à un rôle donné
+     * Ajoute un privilège à un rôle
      * @param idRole ID du rôle
-     * @return Liste des privilèges associés
+     * @param idPrivilege ID du privilège
+     * @return true si l'ajout a réussi, false sinon
      * @throws SQLException En cas d'erreur SQL
      */
-    List<String> findPrivilegesByRole(String idRole) throws SQLException;
+    boolean addPrivilegeToRole(int idRole, int idPrivilege) throws SQLException;
+
+    /**
+     * Retire un privilège d'un rôle
+     * @param idRole ID du rôle
+     * @param idPrivilege ID du privilège
+     * @return true si le retrait a réussi, false sinon
+     * @throws SQLException En cas d'erreur SQL
+     */
+    boolean removePrivilegeFromRole(int idRole, int idPrivilege) throws SQLException;
 }

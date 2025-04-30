@@ -8,16 +8,69 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Implémentation de l'interface DAO pour les logs d'activités
- */
 public class ActiviteLogDAOImpl extends BaseDAOImpl<ActiviteLog> implements IActiviteLogDAO {
 
-    /**
-     * Constructeur
-     */
     public ActiviteLogDAOImpl() {
         super();
+    }
+
+    @Override
+    public ActiviteLog save(ActiviteLog activiteLog) throws SQLException {
+        String query = "INSERT INTO activite_log (TYPE_ACTIVITE, TYPE_REFERENCE, ID_REFERENCE, DESCRIPTION, DATE_ACTIVITE) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, activiteLog.getTypeActivite());
+            stmt.setString(2, activiteLog.getTypeReference());
+
+            if (activiteLog.getIdReference() > 0) {
+                stmt.setInt(3, activiteLog.getIdReference());
+            } else {
+                stmt.setNull(3, Types.INTEGER);
+            }
+
+            stmt.setString(4, activiteLog.getDescription());
+
+            if (activiteLog.getDateActivite() != null) {
+                stmt.setTimestamp(5, Timestamp.valueOf(activiteLog.getDateActivite()));
+            } else {
+                stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            }
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        activiteLog.setIdActivite(generatedKeys.getInt(1));
+                        return activiteLog;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean update(ActiviteLog activiteLog) throws SQLException {
+        // Les logs d'activité ne devraient généralement pas être modifiés
+        throw new UnsupportedOperationException("La modification des logs d'activité n'est pas supportée");
+    }
+
+    @Override
+    public boolean delete(int id) throws SQLException {
+        String query = "DELETE FROM activite_log WHERE ID_ACTIVITE = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+
+            return stmt.executeUpdate() > 0;
+        }
     }
 
     @Override
@@ -57,73 +110,44 @@ public class ActiviteLogDAOImpl extends BaseDAOImpl<ActiviteLog> implements IAct
     }
 
     @Override
-    public ActiviteLog save(ActiviteLog activite) throws SQLException {
-        String query = "INSERT INTO activite_log (TYPE_ACTIVITE, TYPE_REFERENCE, ID_REFERENCE, DESCRIPTION, DATE_ACTIVITE) VALUES (?, ?, ?, ?, ?)";
+    public List<ActiviteLog> findByType(String typeActivite) throws SQLException {
+        List<ActiviteLog> activites = new ArrayList<>();
+        String query = "SELECT * FROM activite_log WHERE TYPE_ACTIVITE = ? ORDER BY DATE_ACTIVITE DESC";
 
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, activite.getTypeActivite());
-            stmt.setString(2, activite.getTypeReference());
-            stmt.setInt(3, activite.getIdReference());
-            stmt.setString(4, activite.getDescription());
+            stmt.setString(1, typeActivite);
 
-            if (activite.getDateActivite() != null) {
-                stmt.setTimestamp(5, Timestamp.valueOf(activite.getDateActivite()));
-            } else {
-                stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            }
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        activite.setIdActivite(generatedKeys.getInt(1));
-                        return activite;
-                    }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    activites.add(mapResultSetToEntity(rs));
                 }
             }
         }
 
-        return null;
+        return activites;
     }
 
     @Override
-    public boolean update(ActiviteLog activite) throws SQLException {
-        String query = "UPDATE activite_log SET TYPE_ACTIVITE = ?, TYPE_REFERENCE = ?, ID_REFERENCE = ?, DESCRIPTION = ?, DATE_ACTIVITE = ? WHERE ID_ACTIVITE = ?";
+    public List<ActiviteLog> findByReference(String typeReference, int idReference) throws SQLException {
+        List<ActiviteLog> activites = new ArrayList<>();
+        String query = "SELECT * FROM activite_log WHERE TYPE_REFERENCE = ? AND ID_REFERENCE = ? ORDER BY DATE_ACTIVITE DESC";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, activite.getTypeActivite());
-            stmt.setString(2, activite.getTypeReference());
-            stmt.setInt(3, activite.getIdReference());
-            stmt.setString(4, activite.getDescription());
+            stmt.setString(1, typeReference);
+            stmt.setInt(2, idReference);
 
-            if (activite.getDateActivite() != null) {
-                stmt.setTimestamp(5, Timestamp.valueOf(activite.getDateActivite()));
-            } else {
-                stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    activites.add(mapResultSetToEntity(rs));
+                }
             }
-
-            stmt.setInt(6, activite.getIdActivite());
-
-            return stmt.executeUpdate() > 0;
         }
-    }
 
-    @Override
-    public boolean delete(int id) throws SQLException {
-        String query = "DELETE FROM activite_log WHERE ID_ACTIVITE = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, id);
-
-            return stmt.executeUpdate() > 0;
-        }
+        return activites;
     }
 
     @Override
@@ -147,61 +171,20 @@ public class ActiviteLogDAOImpl extends BaseDAOImpl<ActiviteLog> implements IAct
     }
 
     @Override
-    public List<ActiviteLog> findByType(String typeActivite) throws SQLException {
-        List<ActiviteLog> activites = new ArrayList<>();
-        String query = "SELECT * FROM activite_log WHERE TYPE_ACTIVITE = ? ORDER BY DATE_ACTIVITE DESC";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, typeActivite);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    activites.add(mapResultSetToEntity(rs));
-                }
-            }
-        }
-
-        return activites;
-    }
-
-    @Override
-    public List<ActiviteLog> findByReference(int idReference, String typeReference) throws SQLException {
-        List<ActiviteLog> activites = new ArrayList<>();
-        String query = "SELECT * FROM activite_log WHERE ID_REFERENCE = ? AND TYPE_REFERENCE = ? ORDER BY DATE_ACTIVITE DESC";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, idReference);
-            stmt.setString(2, typeReference);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    activites.add(mapResultSetToEntity(rs));
-                }
-            }
-        }
-
-        return activites;
-    }
-
-    @Override
     protected ActiviteLog mapResultSetToEntity(ResultSet rs) throws SQLException {
-        ActiviteLog activite = new ActiviteLog();
+        ActiviteLog activiteLog = new ActiviteLog();
 
-        activite.setIdActivite(rs.getInt("ID_ACTIVITE"));
-        activite.setTypeActivite(rs.getString("TYPE_ACTIVITE"));
-        activite.setTypeReference(rs.getString("TYPE_REFERENCE"));
-        activite.setIdReference(rs.getInt("ID_REFERENCE"));
-        activite.setDescription(rs.getString("DESCRIPTION"));
+        activiteLog.setIdActivite(rs.getInt("ID_ACTIVITE"));
+        activiteLog.setTypeActivite(rs.getString("TYPE_ACTIVITE"));
+        activiteLog.setTypeReference(rs.getString("TYPE_REFERENCE"));
+        activiteLog.setIdReference(rs.getInt("ID_REFERENCE"));
+        activiteLog.setDescription(rs.getString("DESCRIPTION"));
 
-        Timestamp date = rs.getTimestamp("DATE_ACTIVITE");
-        if (date != null) {
-            activite.setDateActivite(date.toLocalDateTime());
+        Timestamp tsDateActivite = rs.getTimestamp("DATE_ACTIVITE");
+        if (tsDateActivite != null) {
+            activiteLog.setDateActivite(tsDateActivite.toLocalDateTime());
         }
 
-        return activite;
+        return activiteLog;
     }
 }

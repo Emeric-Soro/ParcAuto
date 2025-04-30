@@ -3,36 +3,29 @@ package main.java.ci.miage.MiAuto.models;
 import java.time.LocalDateTime;
 
 /**
- * Classe représentant les logs d'activité dans le système
+ * Modèle représentant un journal d'activité
  */
 public class ActiviteLog {
     private int idActivite;
-    private String typeActivite;  // ex: CREATION, MODIFICATION, SUPPRESSION, ATTRIBUTION, etc.
-    private String typeReference; // ex: VEHICULE, MISSION, ENTRETIEN, etc.
-    private int idReference;      // ID de l'entité concernée
+    private String typeActivite;
+    private String typeReference;
+    private int idReference;
     private String description;
     private LocalDateTime dateActivite;
 
-    /**
-     * Constructeur par défaut
-     */
+    // Constructeur par défaut
     public ActiviteLog() {
-        this.dateActivite = LocalDateTime.now();
     }
 
-    /**
-     * Constructeur avec paramètres
-     * @param typeActivite Type d'activité
-     * @param typeReference Type de référence
-     * @param idReference ID de référence
-     * @param description Description de l'activité
-     */
-    public ActiviteLog(String typeActivite, String typeReference, int idReference, String description) {
+    // Constructeur complet
+    public ActiviteLog(int idActivite, String typeActivite, String typeReference, int idReference,
+                       String description, LocalDateTime dateActivite) {
+        this.idActivite = idActivite;
         this.typeActivite = typeActivite;
         this.typeReference = typeReference;
         this.idReference = idReference;
         this.description = description;
-        this.dateActivite = LocalDateTime.now();
+        this.dateActivite = dateActivite;
     }
 
     // Getters et Setters

@@ -3,6 +3,7 @@ package main.java.ci.miage.MiAuto.dao.interfaces;
 import main.java.ci.miage.MiAuto.models.Utilisateur;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,6 +27,8 @@ public interface IUtilisateurDAO extends IBaseDAO<Utilisateur> {
      */
     Utilisateur findByLogin(String login) throws SQLException;
 
+
+    boolean updateLastConnection(int idUtilisateur, LocalDateTime dateConnexion) throws SQLException;
 
     /**
      * Recherche des utilisateurs par rôle

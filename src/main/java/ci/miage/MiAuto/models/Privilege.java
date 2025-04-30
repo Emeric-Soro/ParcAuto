@@ -1,7 +1,7 @@
 package main.java.ci.miage.MiAuto.models;
 
 /**
- * Modèle représentant un privilège d'accès dans le système
+ * Modèle représentant un privilège utilisateur
  */
 public class Privilege {
     private int idPrivilege;
@@ -12,8 +12,9 @@ public class Privilege {
     public Privilege() {
     }
 
-    // Constructeur avec les champs obligatoires
-    public Privilege(String nomPrivilege) {
+    // Constructeur avec champs obligatoires
+    public Privilege(int idPrivilege, String nomPrivilege) {
+        this.idPrivilege = idPrivilege;
         this.nomPrivilege = nomPrivilege;
     }
 
@@ -47,6 +48,21 @@ public class Privilege {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Privilege privilege = (Privilege) o;
+
+        return idPrivilege == privilege.idPrivilege;
+    }
+
+    @Override
+    public int hashCode() {
+        return idPrivilege;
     }
 
     @Override

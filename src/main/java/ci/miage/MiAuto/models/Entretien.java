@@ -2,6 +2,9 @@ package main.java.ci.miage.MiAuto.models;
 
 import java.time.LocalDateTime;
 
+/**
+ * Modèle représentant un entretien de véhicule
+ */
 public class Entretien {
     private int idEntretien;
     private int idVehicule;
@@ -9,21 +12,54 @@ public class Entretien {
     private LocalDateTime dateSortieEntr;
     private String motifEntr;
     private String observation;
-    private Integer coutEntr;
+    private int coutEntr;
     private String lieuEntr;
 
+    // Relation avec le véhicule (à charger depuis la base)
+    private Vehicule vehicule;
+
+    /**
+     * Constructeur par défaut
+     */
     public Entretien() {
     }
 
-    public Entretien(int idEntretien, LocalDateTime dateSortieEntr, LocalDateTime dateEntreeEntr, int idVehicule, String motifEntr, Integer coutEntr, String observation, String lieuEntr) {
-        this.idEntretien = idEntretien;
-        this.dateSortieEntr = dateSortieEntr;
-        this.dateEntreeEntr = dateEntreeEntr;
+    /**
+     * Constructeur avec les champs obligatoires
+     * @param idVehicule ID du véhicule en entretien
+     * @param dateEntreeEntr Date d'entrée en entretien
+     * @param motifEntr Motif de l'entretien
+     */
+    public Entretien(int idVehicule, LocalDateTime dateEntreeEntr, String motifEntr) {
         this.idVehicule = idVehicule;
+        this.dateEntreeEntr = dateEntreeEntr;
         this.motifEntr = motifEntr;
-        this.coutEntr = coutEntr;
+    }
+
+    /**
+     * Constructeur complet
+     */
+    public Entretien(int idEntretien, int idVehicule, LocalDateTime dateEntreeEntr,
+                     LocalDateTime dateSortieEntr, String motifEntr, String observation,
+                     int coutEntr, String lieuEntr) {
+        this.idEntretien = idEntretien;
+        this.idVehicule = idVehicule;
+        this.dateEntreeEntr = dateEntreeEntr;
+        this.dateSortieEntr = dateSortieEntr;
+        this.motifEntr = motifEntr;
         this.observation = observation;
+        this.coutEntr = coutEntr;
         this.lieuEntr = lieuEntr;
+    }
+
+    // Getters et Setters
+
+    public int getIdEntretien() {
+        return idEntretien;
+    }
+
+    public void setIdEntretien(int idEntretien) {
+        this.idEntretien = idEntretien;
     }
 
     public int getIdVehicule() {
@@ -34,20 +70,12 @@ public class Entretien {
         this.idVehicule = idVehicule;
     }
 
-    public String getLieuEntr() {
-        return lieuEntr;
+    public LocalDateTime getDateEntreeEntr() {
+        return dateEntreeEntr;
     }
 
-    public void setLieuEntr(String lieuEntr) {
-        this.lieuEntr = lieuEntr;
-    }
-
-    public Integer getCoutEntr() {
-        return coutEntr;
-    }
-
-    public void setCoutEntr(Integer coutEntr) {
-        this.coutEntr = coutEntr;
+    public void setDateEntreeEntr(LocalDateTime dateEntreeEntr) {
+        this.dateEntreeEntr = dateEntreeEntr;
     }
 
     public LocalDateTime getDateSortieEntr() {
@@ -74,33 +102,54 @@ public class Entretien {
         this.observation = observation;
     }
 
-    public LocalDateTime getDateEntreeEntr() {
-        return dateEntreeEntr;
+    public int getCoutEntr() {
+        return coutEntr;
     }
 
-    public void setDateEntreeEntr(LocalDateTime dateEntreeEntr) {
-        this.dateEntreeEntr = dateEntreeEntr;
+    public void setCoutEntr(int coutEntr) {
+        this.coutEntr = coutEntr;
     }
 
-    public int getIdEntretien() {
-        return idEntretien;
+    public String getLieuEntr() {
+        return lieuEntr;
     }
 
-    public void setIdEntretien(int idEntretien) {
-        this.idEntretien = idEntretien;
+    public void setLieuEntr(String lieuEntr) {
+        this.lieuEntr = lieuEntr;
+    }
+
+    public Vehicule getVehicule() {
+        return vehicule;
+    }
+
+    public void setVehicule(Vehicule vehicule) {
+        this.vehicule = vehicule;
+        if (vehicule != null) {
+            this.idVehicule = vehicule.getIdVehicule();
+        }
+    }
+
+    /**
+     * Vérifie si l'entretien est en cours
+     * @return true si l'entretien est en cours, false s'il est terminé
+     */
+    public boolean isEnCours() {
+        return dateSortieEntr == null;
+    }
+
+    /**
+     * Calcule la durée de l'entretien en jours
+     * @return Durée en jours ou 0 si l'entretien n'est pas terminé
+     */
+    public long getDureeJours() {
+        if (dateEntreeEntr != null && dateSortieEntr != null) {
+            return java.time.temporal.ChronoUnit.DAYS.between(dateEntreeEntr, dateSortieEntr);
+        }
+        return 0;
     }
 
     @Override
     public String toString() {
-        return "Entretien{" +
-                "idEntretien=" + idEntretien +
-                ", idVehicule=" + idVehicule +
-                ", dateEntreeEntr=" + dateEntreeEntr +
-                ", dateSortieEntr=" + dateSortieEntr +
-                ", motifEntr='" + motifEntr + '\'' +
-                ", observation='" + observation + '\'' +
-                ", coutEntr=" + coutEntr +
-                ", lieuEntr='" + lieuEntr + '\'' +
-                '}';
+        return "Entretien #" + idEntretien + " - " + motifEntr;
     }
 }

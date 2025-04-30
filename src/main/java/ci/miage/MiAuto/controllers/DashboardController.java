@@ -1,27 +1,18 @@
 package main.java.ci.miage.MiAuto.controllers;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import main.java.ci.miage.MiAuto.Main;
-import main.java.ci.miage.MiAuto.models.ActiviteLog;
+import main.java.ci.miage.MiAuto.models.Role;
 import main.java.ci.miage.MiAuto.models.Utilisateur;
-import main.java.ci.miage.MiAuto.services.ActiviteLogService;
-import main.java.ci.miage.MiAuto.services.AuthentificationService;
 import main.java.ci.miage.MiAuto.services.StatistiquesService;
-import main.java.ci.miage.MiAuto.services.VehiculeService;
 import main.java.ci.miage.MiAuto.utils.AlertUtils;
 import main.java.ci.miage.MiAuto.utils.SessionManager;
 
@@ -29,28 +20,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Contrôleur pour le tableau de bord principal
- */
 public class DashboardController implements Initializable {
-
-    @FXML
-    private Label lblUserName;
-
-    @FXML
-    private Label lblUserRole;
-
-    @FXML
-    private Label lblDate;
-
-    @FXML
-    private Label lblTitle;
-
-    @FXML
-    private StackPane contentArea;
 
     @FXML
     private Button btnDashboard;
@@ -77,233 +49,187 @@ public class DashboardController implements Initializable {
     private Button btnUtilisateurs;
 
     @FXML
+    private Label lblUserName;
+
+    @FXML
+    private Label lblUserRole;
+
+    @FXML
     private Button btnLogout;
 
-    private VehiculeService vehiculeService;
-    private StatistiquesService statistiquesService;
-    private AuthentificationService authentificationService;
-    private ActiviteLogService activiteLogService;
+    @FXML
+    private Label lblTitle;
 
-    /**
-     * Initialise le contrôleur
-     * @param url URL de localisation
-     * @param rb Bundle de ressources
-     */
+    @FXML
+    private Label lblDate;
+
+    @FXML
+    private StackPane contentArea;
+
+    private StatistiquesService statistiquesService;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("DashboardController.initialize() called");
-
-        // Initialiser les services
-        vehiculeService = new VehiculeService();
         statistiquesService = new StatistiquesService();
-        authentificationService = new AuthentificationService();
-        activiteLogService = new ActiviteLogService();
 
-        // Vérifier si contentArea est initialisé
-        if (contentArea == null) {
-            System.err.println("ERREUR: contentArea est null dans initialize()");
-        } else {
-            System.out.println("contentArea initialisé correctement dans initialize()");
+        // Définir la date du jour
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
+        lblDate.setText(LocalDate.now().format(formatter));
 
-            // Important: Initialiser le MainController ici
-            MainController.getInstance().setContentArea(contentArea);
-        }
-
-        // Afficher la date actuelle
-        lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy")));
-
-        // Charger les informations de l'utilisateur connecté
-        chargerInfosUtilisateur();
-
-        // Activer le bouton Dashboard et définir le titre
-        setActiveButton(btnDashboard);
-        lblTitle.setText("Tableau de bord");
+        // Charger le tableau de bord par défaut
+        loadDashboard();
     }
 
     /**
-     * Getter pour la zone de contenu (utilisé par MainController)
-     * @return La zone de contenu
+     * Initialise les données de l'utilisateur connecté
      */
-    public StackPane getContentArea() {
-        System.out.println("DashboardController.getContentArea() called");
-        if (contentArea == null) {
-            System.err.println("ERREUR: contentArea est null dans getContentArea()");
-        }
-        return contentArea;
-    }
+    public void initUserData() {
+        Utilisateur user = SessionManager.getInstance().getUtilisateurConnecte();
+        if (user != null) {
+            lblUserName.setText(user.getLogin());
 
-    /**
-     * Charge les informations de l'utilisateur connecté
-     */
-    private void chargerInfosUtilisateur() {
-        Utilisateur utilisateur = SessionManager.getInstance().getUtilisateurConnecte();
-        if (utilisateur != null) {
-            lblUserName.setText(utilisateur.getLogin());
-            if (utilisateur.getRole() != null) {
-                lblUserRole.setText(utilisateur.getRole().getNomRole());
+            Role role = user.getRole();
+            if (role != null) {
+                lblUserRole.setText(role.getNomRole());
             } else {
-                lblUserRole.setText("Utilisateur");
+                lblUserRole.setText("Non défini");
             }
-        } else {
-            // Valeurs par défaut si l'utilisateur n'est pas connecté
-            lblUserName.setText("Utilisateur");
-            lblUserRole.setText("Invité");
+
+            // Configurer les permissions selon le rôle
+            configurePermissions(user);
         }
     }
 
     /**
-     * Gère le clic sur le bouton Tableau de bord
-     * @param event Événement de clic
+     * Configure les permissions selon le rôle de l'utilisateur
      */
-    @FXML
-    private void handleDashboardButton(ActionEvent event) {
-        setActiveButton(btnDashboard);
-        lblTitle.setText("Tableau de bord");
+    private void configurePermissions(Utilisateur user) {
+        // Exemple de configuration des permissions
+        if (!SessionManager.getInstance().hasPrivilege("GESTION_UTILISATEURS")) {
+            btnUtilisateurs.setDisable(true);
+            btnUtilisateurs.setVisible(false);
+        }
 
-        // Utiliser MainController pour charger le tableau de bord
-        MainController.getInstance().loadDashboard();
+        // Autres permissions à configurer selon les besoins
     }
 
-    /**
-     * Gère le clic sur le bouton Véhicules
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleVehiculesButton(ActionEvent event) {
+    void handleDashboardButton(ActionEvent event) {
+        setActiveButton(btnDashboard);
+        lblTitle.setText("Tableau de bord");
+        loadDashboard();
+    }
+
+    @FXML
+    void handleVehiculesButton(ActionEvent event) {
         setActiveButton(btnVehicules);
         lblTitle.setText("Gestion des Véhicules");
-
-        // Utiliser MainController pour naviguer vers la vue des véhicules
-        MainController.getInstance().navigateTo("vehicule/liste_vehicules");
+        loadPage("vehicule/liste_vehicules.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Missions
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleMissionsButton(ActionEvent event) {
+    void handleMissionsButton(ActionEvent event) {
         setActiveButton(btnMissions);
         lblTitle.setText("Gestion des Missions");
-
-        // Utiliser MainController pour naviguer vers la vue des missions
-        MainController.getInstance().navigateTo("mission/liste_missions");
+        loadPage("mission/liste_missions.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Personnel
-     * @param event Événement de clic
-     */
     @FXML
-    private void handlePersonnelButton(ActionEvent event) {
+    void handlePersonnelButton(ActionEvent event) {
         setActiveButton(btnPersonnel);
         lblTitle.setText("Gestion du Personnel");
-
-        // Utiliser MainController pour naviguer vers la vue du personnel
-        MainController.getInstance().navigateTo("personnel/personnels");
+        loadPage("personnel/personnels.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Entretiens
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleEntretiensButton(ActionEvent event) {
+    void handleEntretiensButton(ActionEvent event) {
         setActiveButton(btnEntretiens);
         lblTitle.setText("Gestion des Entretiens");
-
-        // Utiliser MainController pour naviguer vers la vue des entretiens
-        MainController.getInstance().navigateTo("entretien/liste_entretiens");
+        loadPage("entretien/liste_entretiens.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Visites
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleVisitesButton(ActionEvent event) {
+    void handleVisitesButton(ActionEvent event) {
         setActiveButton(btnVisites);
         lblTitle.setText("Gestion des Visites Techniques");
-
-        // Utiliser MainController pour naviguer vers la vue des visites techniques
-        MainController.getInstance().navigateTo("visite/liste_visites");
+        loadPage("visite/liste_visites.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Assurances
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleAssurancesButton(ActionEvent event) {
+    void handleAssurancesButton(ActionEvent event) {
         setActiveButton(btnAssurances);
         lblTitle.setText("Gestion des Assurances");
-
-        // Utiliser MainController pour naviguer vers la vue des assurances
-        MainController.getInstance().navigateTo("assurance/liste_assurances");
+        loadPage("assurance/liste_assurances.fxml");
     }
 
-    /**
-     * Gère le clic sur le bouton Utilisateurs
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleUtilisateursButton(ActionEvent event) {
+    void handleUtilisateursButton(ActionEvent event) {
         setActiveButton(btnUtilisateurs);
         lblTitle.setText("Gestion des Utilisateurs");
+        loadPage("utilisateur/utilisateur.fxml");
+    }
 
-        // Utiliser MainController pour naviguer vers la vue des utilisateurs
-        MainController.getInstance().navigateTo("utilisateur/utilisateurs");
+    @FXML
+    void handleLogoutButton(ActionEvent event) {
+        // Confirmation de déconnexion
+        boolean confirm = AlertUtils.showConfirmationAlert(
+                "Déconnexion",
+                "Êtes-vous sûr de vouloir vous déconnecter ?",
+                "Toutes les modifications non enregistrées seront perdues.");
+
+        if (confirm) {
+            // Déconnexion
+            SessionManager.getInstance().deconnecter();
+
+            // Retour à l'écran de connexion
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("../../../../../resources/fxml/login.fxml"));
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("../../../../../resources/css/main.css").toExternalForm());
+
+                Stage stage = (Stage) btnLogout.getScene().getWindow();
+                stage.setTitle("MiAuto - Connexion");
+                stage.setScene(scene);
+                stage.setMaximized(false);
+                stage.setWidth(700);
+                stage.setHeight(500);
+                stage.centerOnScreen();
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                AlertUtils.showErrorAlert("Erreur", "Erreur lors du chargement de l'écran de connexion.");
+            }
+        }
     }
 
     /**
-     * Gère le clic sur le bouton de déconnexion
-     * @param event Événement de clic
+     * Charge le tableau de bord
      */
-    @FXML
-    private void handleLogoutButton(ActionEvent event) {
-        // Déconnecter l'utilisateur
-        authentificationService.deconnecter();
-        SessionManager.getInstance().deconnecter();
+    private void loadDashboard() {
+        loadPage("dashboard.fxml");
+    }
 
+    /**
+     * Charge une page dans la zone de contenu
+     * @param fxml Chemin du fichier FXML à charger
+     */
+    private void loadPage(String fxml) {
         try {
-            // Fermer la fenêtre actuelle
-            Stage currentStage = (Stage) btnLogout.getScene().getWindow();
-            currentStage.close();
-
-            // Ouvrir une nouvelle fenêtre de connexion
-            FXMLLoader loader = new FXMLLoader();
-            URL loginUrl = getClass().getResource("/fxml/login.fxml");
-
-            // Si le chemin direct ne fonctionne pas, essayer d'autres chemins courants
-            if (loginUrl == null) {
-                loginUrl = getClass().getResource("/resources/fxml/login.fxml");
-                if (loginUrl == null) {
-                    loginUrl = getClass().getResource("/main/resources/fxml/login.fxml");
-                    if (loginUrl == null) {
-                        loginUrl = new URL("file:src/main/resources/fxml/login.fxml");
-                    }
-                }
-            }
-
-            loader.setLocation(loginUrl);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../../../resources/fxml/" + fxml));
             Parent root = loader.load();
-
-            Stage loginStage = new Stage();
-            loginStage.setTitle("MiAuto - Connexion");
-            loginStage.setScene(new Scene(root));
-            loginStage.show();
-
-        } catch (Exception e) {
-            AlertUtils.showErrorAlert("Erreur", "Impossible d'ouvrir la page de connexion: " + e.getMessage());
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(root);
+        } catch (IOException e) {
             e.printStackTrace();
+            AlertUtils.showErrorAlert("Erreur", "Erreur lors du chargement de la page: " + fxml);
         }
     }
 
     /**
      * Définit le bouton actif dans le menu
-     * @param btn Bouton à activer
+     * @param activeButton Bouton à activer
      */
-    private void setActiveButton(Button btn) {
+    private void setActiveButton(Button activeButton) {
         // Réinitialiser tous les boutons
         btnDashboard.getStyleClass().remove("active");
         btnVehicules.getStyleClass().remove("active");
@@ -315,6 +241,10 @@ public class DashboardController implements Initializable {
         btnUtilisateurs.getStyleClass().remove("active");
 
         // Activer le bouton sélectionné
-        btn.getStyleClass().add("active");
+        activeButton.getStyleClass().add("active");
+    }
+
+    public StackPane getContentArea() {
+        return null;
     }
 }

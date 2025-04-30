@@ -3,7 +3,6 @@ package main.java.ci.miage.MiAuto.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,13 +15,8 @@ import main.java.ci.miage.MiAuto.services.AuthentificationService;
 import main.java.ci.miage.MiAuto.utils.SessionManager;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-/**
- * Contrôleur pour la page de connexion
- */
-public class LoginController implements Initializable {
+public class LoginController {
 
     @FXML
     private TextField txtUsername;
@@ -38,81 +32,66 @@ public class LoginController implements Initializable {
 
     private AuthentificationService authentificationService;
 
-    /**
-     * Initialise le contrôleur
-     *
-     * @param url URL de localisation
-     * @param rb  Bundle de ressources
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // Initialiser le service d'authentification
-        authentificationService = new AuthentificationService();
-
-        // Cacher le message d'erreur au démarrage
-        lblError.setText("");
-
-        // Ajouter un écouteur pour permettre la connexion avec la touche Entrée
-        txtPassword.setOnAction(this::handleLoginButton);
+    public LoginController() {
+        this.authentificationService = new AuthentificationService();
     }
 
-    /**
-     * Gère le clic sur le bouton de connexion
-     *
-     * @param event Événement de clic
-     */
     @FXML
-    private void handleLoginButton(ActionEvent event) {
+    void handleLoginButton(ActionEvent event) {
         String username = txtUsername.getText().trim();
-        String password = txtPassword.getText();
+        String password = txtPassword.getText().trim();
 
-        // Vérifier que les champs ne sont pas vides
+        // Validation basique
         if (username.isEmpty() || password.isEmpty()) {
-            lblError.setText("Veuillez remplir tous les champs");
+            showError("Veuillez remplir tous les champs.");
             return;
         }
 
-        try {
-            // Tenter l'authentification
-            Utilisateur utilisateur = authentificationService.authentifier(username, password);
+        // Tentative d'authentification
+        Utilisateur utilisateur = authentificationService.authenticate(username, password);
 
-            if (utilisateur != null) {
-                // Authentification réussie
-                // Stocker l'utilisateur dans la session
-                SessionManager.getInstance().setUtilisateurConnecte(utilisateur);
+        if (utilisateur != null) {
+            // Stockage de l'utilisateur connecté dans la session
+            SessionManager.getInstance().setUtilisateurConnecte(utilisateur);
 
-                // Ouvrir la page principale
-                ouvrirDashboard();
+            // Mise à jour de la dernière connexion
+            authentificationService.updateLastConnection(utilisateur.getIdUtilisateur());
 
-                // Fermer la fenêtre de connexion
-                ((Stage) btnLogin.getScene().getWindow()).close();
-            } else {
-                // Authentification échouée
-                lblError.setText("Nom d'utilisateur ou mot de passe incorrect");
-            }
-        } catch (Exception e) {
-            lblError.setText("Erreur lors de la connexion: " + e.getMessage());
-            e.printStackTrace();
+            // Ouvrir l'écran principal
+            openMainScreen();
+        } else {
+            showError("Nom d'utilisateur ou mot de passe incorrect.");
         }
     }
 
-    /**
-     * Ouvre le tableau de bord principal
-     */
-    private void ouvrirDashboard() {
+    private void showError(String message) {
+        lblError.setText(message);
+        lblError.setVisible(true);
+    }
+
+    private void openMainScreen() {
         try {
+            // Charger l'écran principal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../../../resources/fxml/main.fxml"));
             Parent root = loader.load();
 
-            Stage stage = new Stage();
+            // Récupérer le contrôleur principal pour initialiser les données utilisateur
+            DashboardController controller = loader.getController();
+            controller.initUserData();
+
+            // Créer une nouvelle scène
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("../../../../../resources/css/main.css").toExternalForm());
+
+            // Récupérer la fenêtre de connexion et la reconfigurer
+            Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setTitle("MiAuto - Gestion du Parc Automobile");
+            stage.setScene(scene);
             stage.setMaximized(true);
-            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            lblError.setText("Erreur lors de l'ouverture du tableau de bord: " + e.getMessage());
             e.printStackTrace();
+            showError("Erreur lors du chargement de l'application.");
         }
     }
 }
-

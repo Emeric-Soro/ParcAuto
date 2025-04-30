@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.ParticipantsMissionController">
+    <top>
+        <VBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="lblTitreMission" text="Participants à la mission : [Nom de la mission]">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <Separator prefWidth="200.0" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </VBox>
+    </top>
+    <center>
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Participants actuels :">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <ListView fx:id="listParticipants" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <Button fx:id="btnRetirer" disable="true" mnemonicParsing="false" onAction="#handleRetirerButton" text="Retirer de la mission" />
+                    </children>
+                </VBox>
+                <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Personnel disponible :">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <TextField fx:id="txtRecherche" promptText="Rechercher..." HBox.hgrow="ALWAYS" />
+                                <Button fx:id="btnRechercher" mnemonicParsing="false" onAction="#handleRechercherButton" text="Rechercher" />
+                            </children>
+                        </HBox>
+                        <ListView fx:id="listPersonnelsDisponibles" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <Button fx:id="btnAjouter" disable="true" mnemonicParsing="false" onAction="#handleAjouterButton" text="Ajouter à la mission" />
+                    </children>
+                </VBox>
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnFermer" mnemonicParsing="false" onAction="#handleFermerButton" text="Fermer" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>

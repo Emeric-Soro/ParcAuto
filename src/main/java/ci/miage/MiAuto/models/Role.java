@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Modèle représentant un rôle dans le système
+ * Modèle représentant un rôle utilisateur
  */
 public class Role {
     private int idRole;
     private String nomRole;
     private String description;
 
-    // Relations
+    // Liste des privilèges associés à ce rôle
     private List<Privilege> privileges;
 
     // Constructeur par défaut
@@ -19,9 +19,11 @@ public class Role {
         this.privileges = new ArrayList<>();
     }
 
-    // Constructeur avec les champs obligatoires
-    public Role(String nomRole) {
+    // Constructeur avec champs obligatoires
+    public Role(int idRole, String nomRole) {
+        this.idRole = idRole;
         this.nomRole = nomRole;
+        this.privileges = new ArrayList<>();
     }
 
     // Constructeur complet
@@ -66,27 +68,22 @@ public class Role {
     }
 
     /**
-     * Ajoute un privilège au rôle
+     * Ajoute un privilège à ce rôle
      * @param privilege Privilège à ajouter
      */
     public void addPrivilege(Privilege privilege) {
-        if (privileges == null) {
-            privileges = new ArrayList<>();
+        if (!this.privileges.contains(privilege)) {
+            this.privileges.add(privilege);
         }
-        privileges.add(privilege);
     }
 
     /**
-     * Vérifie si le rôle possède un privilège spécifique
+     * Vérifie si ce rôle possède un privilège spécifique
      * @param nomPrivilege Nom du privilège à vérifier
-     * @return true si le rôle a le privilège, false sinon
+     * @return true si le rôle possède le privilège, false sinon
      */
     public boolean hasPrivilege(String nomPrivilege) {
-        if (privileges == null || privileges.isEmpty()) {
-            return false;
-        }
-
-        return privileges.stream()
+        return this.privileges.stream()
                 .anyMatch(p -> p.getNomPrivilege().equals(nomPrivilege));
     }
 

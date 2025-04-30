@@ -4,12 +4,12 @@ import main.java.ci.miage.MiAuto.dao.interfaces.IEntretienDAO;
 import main.java.ci.miage.MiAuto.models.Entretien;
 
 import java.sql.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implémentation de l'interface DAO pour les entretiens
+ * Implémentation DAO pour les opérations liées aux entretiens
  */
 public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntretienDAO {
 
@@ -18,42 +18,6 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
      */
     public EntretienDAOImpl() {
         super();
-    }
-
-    @Override
-    public Entretien findById(int id) throws SQLException {
-        String query = "SELECT * FROM entretien WHERE ID_ENTRETIEN = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToEntity(rs);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public List<Entretien> findAll() throws SQLException {
-        List<Entretien> entretiens = new ArrayList<>();
-        String query = "SELECT * FROM entretien ORDER BY DATE_ENTREE_ENTR DESC";
-
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                entretiens.add(mapResultSetToEntity(rs));
-            }
-        }
-
-        return entretiens;
     }
 
     @Override
@@ -69,7 +33,7 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
             if (entretien.getDateEntreeEntr() != null) {
                 stmt.setTimestamp(2, Timestamp.valueOf(entretien.getDateEntreeEntr()));
             } else {
-                stmt.setNull(2, Types.TIMESTAMP);
+                stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             }
 
             if (entretien.getDateSortieEntr() != null) {
@@ -80,7 +44,7 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
 
             stmt.setString(4, entretien.getMotifEntr());
             stmt.setString(5, entretien.getObservation());
-            stmt.setDouble(6, entretien.getCoutEntr());
+            stmt.setInt(6, entretien.getCoutEntr());
             stmt.setString(7, entretien.getLieuEntr());
 
             int affectedRows = stmt.executeUpdate();
@@ -122,7 +86,7 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
 
             stmt.setString(4, entretien.getMotifEntr());
             stmt.setString(5, entretien.getObservation());
-            stmt.setDouble(6, entretien.getCoutEntr());
+            stmt.setInt(6, entretien.getCoutEntr());
             stmt.setString(7, entretien.getLieuEntr());
             stmt.setInt(8, entretien.getIdEntretien());
 
@@ -144,119 +108,28 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
     }
 
     @Override
-    public List<Entretien> findByVehicule(String idVehicule) throws SQLException {
-        List<Entretien> entretiens = new ArrayList<>();
-        int vehiculeId = Integer.parseInt(idVehicule);
-
-        String query = "SELECT * FROM entretien WHERE ID_VEHICULE = ? ORDER BY DATE_ENTREE_ENTR DESC";
+    public Entretien findById(int id) throws SQLException {
+        String query = "SELECT * FROM entretien WHERE ID_ENTRETIEN = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, vehiculeId);
+            stmt.setInt(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    entretiens.add(mapResultSetToEntity(rs));
+                if (rs.next()) {
+                    return mapResultSetToEntity(rs);
                 }
             }
         }
 
-        return entretiens;
+        return null;
     }
 
     @Override
-    public List<Entretien> findBetweenDates(LocalDate debut, LocalDate fin) throws SQLException {
+    public List<Entretien> findAll() throws SQLException {
         List<Entretien> entretiens = new ArrayList<>();
-
-        String query = "SELECT * FROM entretien " +
-                "WHERE (DATE(DATE_ENTREE_ENTR) BETWEEN ? AND ?) OR " +
-                "(DATE(DATE_SORTIE_ENTR) BETWEEN ? AND ?) OR " +
-                "(DATE_ENTREE_ENTR <= ? AND (DATE_SORTIE_ENTR >= ? OR DATE_SORTIE_ENTR IS NULL)) " +
-                "ORDER BY DATE_ENTREE_ENTR";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            java.sql.Date sqlDebut = java.sql.Date.valueOf(debut);
-            java.sql.Date sqlFin = java.sql.Date.valueOf(fin);
-
-            stmt.setDate(1, sqlDebut);
-            stmt.setDate(2, sqlFin);
-            stmt.setDate(3, sqlDebut);
-            stmt.setDate(4, sqlFin);
-            stmt.setDate(5, sqlDebut);
-            stmt.setDate(6, sqlFin);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    entretiens.add(mapResultSetToEntity(rs));
-                }
-            }
-        }
-
-        return entretiens;
-    }
-
-    @Override
-    public List<Entretien> findByLieu(String lieu) throws SQLException {
-        List<Entretien> entretiens = new ArrayList<>();
-
-        String query = "SELECT * FROM entretien WHERE LIEU_ENTR LIKE ? ORDER BY DATE_ENTREE_ENTR DESC";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, "%" + lieu + "%");
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    entretiens.add(mapResultSetToEntity(rs));
-                }
-            }
-        }
-
-        return entretiens;
-    }
-
-    @Override
-    public boolean updateCout(String idEntretien, double nouveauCout) throws SQLException {
-        int entretienId = Integer.parseInt(idEntretien);
-        String query = "UPDATE entretien SET COUT_ENTR = ? WHERE ID_ENTRETIEN = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setDouble(1, nouveauCout);
-            stmt.setInt(2, entretienId);
-
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-    @Override
-    public int deleteByVehicule(String idVehicule) throws SQLException {
-        int vehiculeId = Integer.parseInt(idVehicule);
-        String query = "DELETE FROM entretien WHERE ID_VEHICULE = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, vehiculeId);
-
-            return stmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Trouve tous les entretiens en cours (date d'entrée existe mais pas de date de sortie)
-     * @return Liste des entretiens en cours
-     * @throws SQLException En cas d'erreur SQL
-     */
-    public List<Entretien> findEntretiensEnCours() throws SQLException {
-        List<Entretien> entretiens = new ArrayList<>();
-
-        String query = "SELECT * FROM entretien WHERE DATE_ENTREE_ENTR IS NOT NULL AND DATE_SORTIE_ENTR IS NULL ORDER BY DATE_ENTREE_ENTR";
+        String query = "SELECT * FROM entretien ORDER BY DATE_ENTREE_ENTR DESC";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
@@ -277,14 +150,14 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
         entretien.setIdEntretien(rs.getInt("ID_ENTRETIEN"));
         entretien.setIdVehicule(rs.getInt("ID_VEHICULE"));
 
-        Timestamp dateEntree = rs.getTimestamp("DATE_ENTREE_ENTR");
-        if (dateEntree != null) {
-            entretien.setDateEntreeEntr(dateEntree.toLocalDateTime());
+        Timestamp tsDateEntree = rs.getTimestamp("DATE_ENTREE_ENTR");
+        if (tsDateEntree != null) {
+            entretien.setDateEntreeEntr(tsDateEntree.toLocalDateTime());
         }
 
-        Timestamp dateSortie = rs.getTimestamp("DATE_SORTIE_ENTR");
-        if (dateSortie != null) {
-            entretien.setDateSortieEntr(dateSortie.toLocalDateTime());
+        Timestamp tsDateSortie = rs.getTimestamp("DATE_SORTIE_ENTR");
+        if (tsDateSortie != null) {
+            entretien.setDateSortieEntr(tsDateSortie.toLocalDateTime());
         }
 
         entretien.setMotifEntr(rs.getString("MOTIF_ENTR"));
@@ -293,5 +166,118 @@ public class EntretienDAOImpl extends BaseDAOImpl<Entretien> implements IEntreti
         entretien.setLieuEntr(rs.getString("LIEU_ENTR"));
 
         return entretien;
+    }
+
+    @Override
+    public List<Entretien> findByVehicule(int idVehicule) throws SQLException {
+        List<Entretien> entretiens = new ArrayList<>();
+        String query = "SELECT * FROM entretien WHERE ID_VEHICULE = ? ORDER BY DATE_ENTREE_ENTR DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, idVehicule);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return entretiens;
+    }
+
+    @Override
+    public List<Entretien> findEnCours() throws SQLException {
+        List<Entretien> entretiens = new ArrayList<>();
+        String query = "SELECT * FROM entretien WHERE DATE_SORTIE_ENTR IS NULL ORDER BY DATE_ENTREE_ENTR DESC";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                entretiens.add(mapResultSetToEntity(rs));
+            }
+        }
+
+        return entretiens;
+    }
+
+    @Override
+    public List<Entretien> findTermines() throws SQLException {
+        List<Entretien> entretiens = new ArrayList<>();
+        String query = "SELECT * FROM entretien WHERE DATE_SORTIE_ENTR IS NOT NULL ORDER BY DATE_SORTIE_ENTR DESC";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                entretiens.add(mapResultSetToEntity(rs));
+            }
+        }
+
+        return entretiens;
+    }
+
+    @Override
+    public List<Entretien> findByMotif(String motif) throws SQLException {
+        List<Entretien> entretiens = new ArrayList<>();
+        String query = "SELECT * FROM entretien WHERE MOTIF_ENTR LIKE ? ORDER BY DATE_ENTREE_ENTR DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + motif + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return entretiens;
+    }
+
+    @Override
+    public List<Entretien> findByLieu(String lieu) throws SQLException {
+        List<Entretien> entretiens = new ArrayList<>();
+        String query = "SELECT * FROM entretien WHERE LIEU_ENTR LIKE ? ORDER BY DATE_ENTREE_ENTR DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + lieu + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return entretiens;
+    }
+
+    @Override
+    public boolean updateDateSortie(int idEntretien, LocalDateTime dateSortie) throws SQLException {
+        String query = "UPDATE entretien SET DATE_SORTIE_ENTR = ? WHERE ID_ENTRETIEN = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            if (dateSortie != null) {
+                stmt.setTimestamp(1, Timestamp.valueOf(dateSortie));
+            } else {
+                stmt.setNull(1, Types.TIMESTAMP);
+            }
+
+            stmt.setInt(2, idEntretien);
+
+            return stmt.executeUpdate() > 0;
+        }
     }
 }

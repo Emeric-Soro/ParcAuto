@@ -1,11 +1,9 @@
 package main.java.ci.miage.MiAuto.models;
 
-
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * Modèle représentant une mission effectuée par un véhicule
+ * Modèle représentant une mission
  */
 public class Mission {
     private int idMission;
@@ -18,26 +16,29 @@ public class Mission {
     private String observationMission;
     private String circuitMission;
 
-    // Relations
+    // Relation avec le véhicule (à charger depuis la base)
     private Vehicule vehicule;
-    private List<Personnel> participants;
+
+    // Relation avec les participants (à charger depuis la base)
+    private java.util.List<Personnel> participants;
 
     // Constructeur par défaut
     public Mission() {
+        this.participants = new java.util.ArrayList<>();
     }
 
-    // Constructeur avec les champs obligatoires
+    // Constructeur avec champs obligatoires
     public Mission(int idVehicule, String libMission, LocalDateTime dateDebutMission) {
         this.idVehicule = idVehicule;
         this.libMission = libMission;
         this.dateDebutMission = dateDebutMission;
+        this.participants = new java.util.ArrayList<>();
     }
 
     // Constructeur complet
-    public Mission(int idMission, int idVehicule, String libMission,
-                   LocalDateTime dateDebutMission, LocalDateTime dateFinMission,
-                   int coutMission, int coutCarburant, String observationMission,
-                   String circuitMission) {
+    public Mission(int idMission, int idVehicule, String libMission, LocalDateTime dateDebutMission,
+                   LocalDateTime dateFinMission, int coutMission, int coutCarburant,
+                   String observationMission, String circuitMission) {
         this.idMission = idMission;
         this.idVehicule = idVehicule;
         this.libMission = libMission;
@@ -47,6 +48,7 @@ public class Mission {
         this.coutCarburant = coutCarburant;
         this.observationMission = observationMission;
         this.circuitMission = circuitMission;
+        this.participants = new java.util.ArrayList<>();
     }
 
     // Getters et Setters
@@ -133,48 +135,56 @@ public class Mission {
         }
     }
 
-    public List<Personnel> getParticipants() {
+    public java.util.List<Personnel> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<Personnel> participants) {
+    public void setParticipants(java.util.List<Personnel> participants) {
         this.participants = participants;
     }
 
     /**
-     * Calcule la durée de la mission en jours
-     *
-     * @return nombre de jours de la mission, ou 0 si la date de fin n'est pas définie
+     * Ajoute un participant à la mission
+     * @param personnel Personnel à ajouter
      */
-    public long getDureeEnJours() {
-        if (dateFinMission == null) {
-            return 0;
+    public void addParticipant(Personnel personnel) {
+        if (!this.participants.contains(personnel)) {
+            this.participants.add(personnel);
         }
-
-        // Calcul de la différence en jours
-        return java.time.Duration.between(dateDebutMission, dateFinMission).toDays();
     }
 
     /**
-     * Vérifie si la mission est terminée
-     *
-     * @return true si la mission est terminée, false sinon
+     * Supprime un participant de la mission
+     * @param personnel Personnel à supprimer
      */
-    public boolean isTerminee() {
-        return dateFinMission != null && dateFinMission.isBefore(LocalDateTime.now());
+    public void removeParticipant(Personnel personnel) {
+        this.participants.remove(personnel);
     }
 
     /**
-     * Calcule le coût total de la mission (mission + carburant)
-     *
-     * @return le coût total en FCFA
+     * Calcule la durée de la mission en jours
+     * @return Durée en jours (0 si la date de fin n'est pas définie)
      */
-    public int getCoutTotal() {
-        return coutMission + coutCarburant;
+    public long getDureeMission() {
+        if (dateDebutMission != null && dateFinMission != null) {
+            return java.time.temporal.ChronoUnit.DAYS.between(dateDebutMission, dateFinMission);
+        }
+        return 0;
+    }
+
+    /**
+     * Vérifie si la mission est en cours
+     * @return true si la mission est en cours, false sinon
+     */
+    public boolean isEnCours() {
+        LocalDateTime now = LocalDateTime.now();
+        return dateDebutMission != null &&
+                (dateDebutMission.isBefore(now) || dateDebutMission.isEqual(now)) &&
+                (dateFinMission == null || dateFinMission.isAfter(now));
     }
 
     @Override
     public String toString() {
-        return libMission + " (" + (vehicule != null ? vehicule.getImmatriculation() : "Véhicule inconnu") + ")";
+        return libMission;
     }
 }

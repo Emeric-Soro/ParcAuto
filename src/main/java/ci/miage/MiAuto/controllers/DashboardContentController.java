@@ -1,25 +1,21 @@
 package main.java.ci.miage.MiAuto.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import main.java.ci.miage.MiAuto.models.ActiviteLog;
-import main.java.ci.miage.MiAuto.services.ActiviteLogService;
 import main.java.ci.miage.MiAuto.services.StatistiquesService;
-import main.java.ci.miage.MiAuto.services.VehiculeService;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Contrôleur pour le contenu du tableau de bord
- */
 public class DashboardContentController implements Initializable {
 
     @FXML
@@ -40,18 +36,11 @@ public class DashboardContentController implements Initializable {
     @FXML
     private VBox activitesContainer;
 
-    private VehiculeService vehiculeService;
     private StatistiquesService statistiquesService;
-    private ActiviteLogService activiteLogService;
 
-    /**
-     * Initialise le contrôleur
-     */
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        vehiculeService = new VehiculeService();
+    public void initialize(URL url, ResourceBundle rb) {
         statistiquesService = new StatistiquesService();
-        activiteLogService = new ActiviteLogService();
 
         // Charger les statistiques
         chargerStatistiques();
@@ -61,111 +50,106 @@ public class DashboardContentController implements Initializable {
     }
 
     /**
-     * Charge les statistiques du tableau de bord
+     * Charge les statistiques dans le tableau de bord
      */
     private void chargerStatistiques() {
-        try {
-            // Statistiques des véhicules
-            int totalVehicules = statistiquesService.getNombreTotalVehicules();
-            int vehiculesEnMission = statistiquesService.getNombreVehiculesEnMission();
-            int vehiculesDisponibles = statistiquesService.getNombreVehiculesDisponibles();
+        int totalVehicules = statistiquesService.getTotalVehicules();
+        int vehiculesEnMission = statistiquesService.getVehiculesEnMission();
+        int vehiculesDisponibles = statistiquesService.getVehiculesDisponibles();
+        int visitesAPlanifier = statistiquesService.getVehiculesVisiteAPlanifier(30); // 30 jours avant expiration
+        int entretiensEnCours = statistiquesService.getEntretiensEnCours();
 
-            lblTotalVehicules.setText(String.valueOf(totalVehicules));
-            lblVehiculesEnMission.setText(String.valueOf(vehiculesEnMission));
-            lblVehiculesDisponibles.setText(String.valueOf(vehiculesDisponibles));
+        // Mettre à jour les labels
+        lblTotalVehicules.setText(String.valueOf(totalVehicules));
+        lblVehiculesEnMission.setText(String.valueOf(vehiculesEnMission));
+        lblVehiculesDisponibles.setText(String.valueOf(vehiculesDisponibles));
+        lblVisitesAPlanifier.setText(String.valueOf(visitesAPlanifier));
+        lblEntretiensEnCours.setText(String.valueOf(entretiensEnCours));
+    }
 
-            // Statistiques de maintenance
-            int visitesAPlanifier = statistiquesService.getNombreVisitesAPlanifier();
-            int entretiensEnCours = statistiquesService.getNombreEntretiensEnCours();
+    /**
+     * Charge les activités récentes dans le tableau de bord
+     */
+    private void chargerActivitesRecentes() {
+        List<ActiviteLog> activitesRecentes = statistiquesService.getActivitesRecentes(5);
 
-            lblVisitesAPlanifier.setText(String.valueOf(visitesAPlanifier));
-            lblEntretiensEnCours.setText(String.valueOf(entretiensEnCours));
-        } catch (Exception e) {
-            System.err.println("Erreur lors du chargement des statistiques: " + e.getMessage());
-            e.printStackTrace();
+        // Vider le conteneur
+        activitesContainer.getChildren().clear();
 
-            // En cas d'erreur, afficher des valeurs par défaut
-            lblTotalVehicules.setText("--");
-            lblVehiculesEnMission.setText("--");
-            lblVehiculesDisponibles.setText("--");
-            lblVisitesAPlanifier.setText("--");
-            lblEntretiensEnCours.setText("--");
+        // Si aucune activité, afficher un message
+        if (activitesRecentes.isEmpty()) {
+            Label lblNoActivity = new Label("Aucune activité récente à afficher");
+            lblNoActivity.getStyleClass().add("activity-item");
+            activitesContainer.getChildren().add(lblNoActivity);
+            return;
+        }
+
+        // Formatter pour les dates
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        // Ajouter chaque activité
+        for (ActiviteLog activite : activitesRecentes) {
+            HBox activityItem = createActivityItem(activite, formatter);
+            activitesContainer.getChildren().add(activityItem);
         }
     }
 
     /**
-     * Charge les activités récentes dans le conteneur d'activités
+     * Crée un élément d'activité pour l'affichage
+     * @param activite Activité à afficher
+     * @param formatter Formatter pour les dates
+     * @return HBox contenant l'activité formatée
      */
-    private void chargerActivitesRecentes() {
-        // Chargement asynchrone pour ne pas bloquer l'interface utilisateur
-        new Thread(() -> {
-            try {
-                // Récupérer les 10 dernières activités
-                List<ActiviteLog> activitesRecentes = activiteLogService.getActivitesRecentes(10);
+    private HBox createActivityItem(ActiviteLog activite, DateTimeFormatter formatter) {
+        HBox hbox = new HBox();
+        hbox.getStyleClass().add("activity-item");
+        hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-                // Mettre à jour l'interface utilisateur sur le thread JavaFX
-                Platform.runLater(() -> {
-                    // Vider le conteneur
-                    activitesContainer.getChildren().clear();
+        // Description de l'activité
+        Label lblDescription = new Label(activite.getDescription());
+        hbox.getChildren().add(lblDescription);
 
-                    if (activitesRecentes.isEmpty()) {
-                        // Message si aucune activité n'est trouvée
-                        Label lblNoActivities = new Label("Aucune activité récente à afficher");
-                        lblNoActivities.getStyleClass().add("activity-item");
-                        lblNoActivities.setPadding(new Insets(15));
-                        activitesContainer.getChildren().add(lblNoActivities);
-                    } else {
-                        // Afficher chaque activité
-                        for (ActiviteLog activite : activitesRecentes) {
-                            activitesContainer.getChildren().add(creerItemActivite(activite));
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                // Gérer les erreurs
-                System.err.println("Erreur lors du chargement des activités récentes: " + e.getMessage());
-                e.printStackTrace();
+        // Espace flexible
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        spacer.setPrefWidth(200);
+        hbox.getChildren().add(spacer);
 
-                // Afficher un message d'erreur sur l'interface utilisateur
-                Platform.runLater(() -> {
-                    activitesContainer.getChildren().clear();
-                    Label lblError = new Label("Erreur lors du chargement des activités récentes");
-                    lblError.getStyleClass().add("activity-item");
-                    lblError.setPadding(new Insets(15));
-                    activitesContainer.getChildren().add(lblError);
-                });
-            }
-        }).start();
+        // Date de l'activité
+        Label lblTime = new Label(formatTimeAgo(activite.getDateActivite()));
+        lblTime.getStyleClass().add("activity-time");
+        hbox.getChildren().add(lblTime);
+
+        hbox.setPadding(new javafx.geometry.Insets(10, 15, 10, 15));
+
+        return hbox;
     }
 
     /**
-     * Crée un élément d'interface pour afficher une activité
-     * @param activite L'activité à afficher
-     * @return L'élément HBox représentant l'activité
+     * Formate une date en "il y a X temps"
+     * @param dateTime Date à formater
+     * @return Chaîne formatée
      */
-    private HBox creerItemActivite(ActiviteLog activite) {
-        // Créer le conteneur principal
-        HBox activityItem = new HBox();
-        activityItem.getStyleClass().add("activity-item");
-        activityItem.setPadding(new Insets(10, 15, 10, 15));
-        activityItem.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        activityItem.setSpacing(5);
+    private String formatTimeAgo(LocalDateTime dateTime) {
+        LocalDateTime now = LocalDateTime.now();
+        long minutes = ChronoUnit.MINUTES.between(dateTime, now);
 
-        // Texte principal de l'activité
-        Label lblDescription = new Label(activite.getDescription());
-        activityItem.getChildren().add(lblDescription);
+        if (minutes < 60) {
+            return "Il y a " + minutes + " minute" + (minutes > 1 ? "s" : "");
+        }
 
-        // Ajouter un espace flexible
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-        activityItem.getChildren().add(spacer);
+        long hours = ChronoUnit.HOURS.between(dateTime, now);
+        if (hours < 24) {
+            return "Il y a " + hours + " heure" + (hours > 1 ? "s" : "");
+        }
 
-        // Ajouter le temps écoulé
-        String tempsRelative = activiteLogService.formatDateRelative(activite.getDateActivite());
-        Label lblTime = new Label(tempsRelative);
-        lblTime.getStyleClass().add("activity-time");
-        activityItem.getChildren().add(lblTime);
+        long days = ChronoUnit.DAYS.between(dateTime, now);
+        if (days < 7) {
+            return "Il y a " + days + " jour" + (days > 1 ? "s" : "");
+        }
 
-        return activityItem;
+        // Sinon, afficher la date exacte
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return dateTime.format(formatter);
     }
 }

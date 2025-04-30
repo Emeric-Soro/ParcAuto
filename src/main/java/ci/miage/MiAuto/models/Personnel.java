@@ -186,10 +186,11 @@ public class Personnel {
             this.idService = service.getIdService();
         }
     }
+    
 
     @Override
     public String toString() {
-        return nomPersonnel + " " + prenomPersonnel;
+        return nomPersonnel + " " + prenomPersonnel + (contactPersonnel != null ? " (" + contactPersonnel + ")" : "");
     }
 
     public String getNomComplet() {

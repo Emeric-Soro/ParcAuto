@@ -83,7 +83,7 @@ public class ActiviteLogService {
      */
     public List<ActiviteLog> getActivitesByReference(int idReference, String typeReference) {
         try {
-            return activiteLogDAO.findByReference(idReference, typeReference);
+            return activiteLogDAO.findByReference(typeReference, idReference);
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération des activités par référence: " + e.getMessage());
             return new ArrayList<>();

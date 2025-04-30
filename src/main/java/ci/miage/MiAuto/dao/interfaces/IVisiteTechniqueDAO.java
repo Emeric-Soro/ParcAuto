@@ -3,7 +3,7 @@ package main.java.ci.miage.MiAuto.dao.interfaces;
 import main.java.ci.miage.MiAuto.models.VisiteTechnique;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,35 +12,57 @@ import java.util.List;
 public interface IVisiteTechniqueDAO extends IBaseDAO<VisiteTechnique> {
 
     /**
-     * Recherche les visites techniques d’un véhicule
-     * @param idVehicule ID du véhicule
+     * Recherche les visites techniques d'un véhicule spécifique
+     * @param idVehicule ID du véhicule recherché
      * @return Liste des visites techniques du véhicule
      * @throws SQLException En cas d'erreur SQL
      */
-    List<VisiteTechnique> findByVehicule(String idVehicule) throws SQLException;
+    List<VisiteTechnique> findByVehicule(int idVehicule) throws SQLException;
 
     /**
-     * Recherche les visites techniques à venir dans un intervalle de jours
+     * Recherche les visites techniques valides (non expirées)
+     * @return Liste des visites techniques valides
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<VisiteTechnique> findValides() throws SQLException;
+
+    /**
+     * Recherche les visites techniques expirées
+     * @return Liste des visites techniques expirées
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<VisiteTechnique> findExpirees() throws SQLException;
+
+    /**
+     * Recherche les visites techniques qui expirent bientôt
      * @param joursAvantExpiration Nombre de jours avant expiration
-     * @return Liste des visites proches de l’expiration
+     * @return Liste des visites techniques proches de l'expiration
      * @throws SQLException En cas d'erreur SQL
      */
-    List<VisiteTechnique> findProchainesEcheances(int joursAvantExpiration) throws SQLException;
+    List<VisiteTechnique> findProchesExpiration(int joursAvantExpiration) throws SQLException;
 
     /**
-     * Recherche les visites techniques réalisées dans un intervalle de dates
-     * @param debut Date de début
-     * @param fin Date de fin
-     * @return Liste des visites techniques effectuées dans cet intervalle
+     * Recherche les visites techniques effectuées dans une période donnée
+     * @param debut Date de début de la période
+     * @param fin Date de fin de la période
+     * @return Liste des visites techniques dans la période
      * @throws SQLException En cas d'erreur SQL
      */
-    List<VisiteTechnique> findBetweenDates(LocalDate debut, LocalDate fin) throws SQLException;
+    List<VisiteTechnique> findByPeriode(LocalDateTime debut, LocalDateTime fin) throws SQLException;
 
     /**
-     * Supprime toutes les visites techniques d’un véhicule
-     * @param idVehicule ID du véhicule
-     * @return nombre de lignes supprimées
+     * Recherche les visites techniques par résultat
+     * @param resultat Résultat recherché
+     * @return Liste des visites techniques avec le résultat spécifié
      * @throws SQLException En cas d'erreur SQL
      */
-    int deleteByVehicule(String idVehicule) throws SQLException;
+    List<VisiteTechnique> findByResultat(String resultat) throws SQLException;
+
+    /**
+     * Recherche les visites techniques par centre
+     * @param centre Centre de visite recherché
+     * @return Liste des visites techniques effectuées dans le centre spécifié
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<VisiteTechnique> findByCentre(String centre) throws SQLException;
 }

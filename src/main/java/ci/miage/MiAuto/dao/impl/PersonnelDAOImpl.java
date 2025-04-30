@@ -275,4 +275,32 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
             return stmt.executeUpdate() > 0;
         }
     }
+
+    /**
+     * Recherche du personnel par nom ou prénom
+     * @param terme Terme de recherche
+     * @return Liste du personnel correspondant
+     * @throws SQLException En cas d'erreur SQL
+     */
+    public List<Personnel> findByNomOrPrenom(String terme) throws SQLException {
+        List<Personnel> personnels = new ArrayList<>();
+        String query = "SELECT * FROM personnel WHERE LOWER(NOM_PERSONNEL) LIKE ? OR LOWER(PRENOM_PERSONNEL) LIKE ?";
+
+        String searchTerm = "%" + terme.toLowerCase() + "%";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    personnels.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+
+        return personnels;
+    }
 }
