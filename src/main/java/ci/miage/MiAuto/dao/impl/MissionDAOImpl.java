@@ -163,25 +163,19 @@ public class MissionDAOImpl extends BaseDAOImpl<Mission> implements IMissionDAO 
     @Override
     public List<Mission> findAll() throws SQLException {
         List<Mission> missions = new ArrayList<>();
-        String query = "SELECT * FROM mission";
-
+        // 1) Lecture “plate”
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
+             ResultSet rs = stmt.executeQuery("SELECT * FROM mission")) {
             while (rs.next()) {
-                Mission mission = mapResultSetToEntity(rs);
-
-                // Charger le véhicule
-                Vehicule vehicule = vehiculeDAO.findById(mission.getIdVehicule());
-                mission.setVehicule(vehicule);
-
-                // Charger les participants
-                List<Personnel> participants = findParticipants(mission.getIdMission());
-                mission.setParticipants(participants);
-
-                missions.add(mission);
+                missions.add(mapResultSetToEntity(rs));
             }
+        }
+
+        // 2) Hydratation
+        for (Mission m : missions) {
+            m.setVehicule(vehiculeDAO.findById(m.getIdVehicule()));
+            m.setParticipants(findParticipants(m.getIdMission()));
         }
 
         return missions;
@@ -216,8 +210,10 @@ public class MissionDAOImpl extends BaseDAOImpl<Mission> implements IMissionDAO 
     @Override
     public List<Mission> findEnCours() throws SQLException {
         List<Mission> missions = new ArrayList<>();
+        // Modifier cette requête pour récupérer les missions qui sont en cours (date de début
+        // dans le passé ou égale à maintenant ET date de fin soit non définie, soit dans le futur)
         String query = "SELECT * FROM mission WHERE DATE_DEBUT_MISSION <= NOW() AND " +
-                "(DATE_FIN_MISSION IS NULL OR DATE_FIN_MISSION >= NOW())";
+                "(DATE_FIN_MISSION IS NULL OR DATE_FIN_MISSION > NOW())";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();

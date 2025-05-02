@@ -7,8 +7,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main.java.ci.miage.MiAuto.models.Mission;
+import main.java.ci.miage.MiAuto.models.Personnel;
 import main.java.ci.miage.MiAuto.models.Vehicule;
 import main.java.ci.miage.MiAuto.services.MissionService;
+import main.java.ci.miage.MiAuto.services.PersonnelService;
 import main.java.ci.miage.MiAuto.services.VehiculeService;
 import main.java.ci.miage.MiAuto.utils.AlertUtils;
 
@@ -16,8 +18,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Contrôleur pour le formulaire d'ajout/modification de mission
@@ -48,18 +52,42 @@ public class FormMissionController implements Initializable {
     @FXML
     private Button btnAnnuler;
 
+    // Nouveaux éléments UI pour les participants
+    @FXML
+    private TextField txtRecherchePersonnel;
+
+    @FXML
+    private ListView<Personnel> listPersonnelsDisponibles;
+
+    @FXML
+    private ListView<Personnel> listParticipants;
+
+    @FXML
+    private Button btnAjouterParticipant;
+
+    @FXML
+    private Button btnRetirerParticipant;
+
     private MissionService missionService;
     private VehiculeService vehiculeService;
+    private PersonnelService personnelService;
     private Mission mission;
     private MissionController parentController;
     private boolean modeEdition = false;
 
+    // Liste des participants sélectionnés
+    private List<Personnel> participantsSelectionnes = new ArrayList<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.vehiculeService = new VehiculeService();
+        this.personnelService = new PersonnelService();
 
         // Charger les véhicules disponibles
         chargerVehicules();
+
+        // Charger les personnels disponibles
+        chargerPersonnelsDisponibles();
 
         // Configuration du ComboBox pour l'affichage des véhicules
         comboVehicule.setCellFactory(param -> new ListCell<Vehicule>() {
@@ -85,6 +113,47 @@ public class FormMissionController implements Initializable {
                 }
             }
         });
+
+        // Configuration des cellules pour l'affichage des personnels
+        listPersonnelsDisponibles.setCellFactory(param -> new ListCell<Personnel>() {
+            @Override
+            protected void updateItem(Personnel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getPrenomPersonnel() + " " + item.getNomPersonnel());
+                }
+            }
+        });
+
+        listParticipants.setCellFactory(param -> new ListCell<Personnel>() {
+            @Override
+            protected void updateItem(Personnel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getPrenomPersonnel() + " " + item.getNomPersonnel());
+                }
+            }
+        });
+
+        // Ajouter des écouteurs de sélection pour activer/désactiver les boutons
+        listPersonnelsDisponibles.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> btnAjouterParticipant.setDisable(newValue == null));
+
+        listParticipants.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> btnRetirerParticipant.setDisable(newValue == null));
+
+        // Ajouter un écouteur pour la recherche de personnel
+        txtRecherchePersonnel.textProperty().addListener((observable, oldValue, newValue) -> {
+            rechercherPersonnel(newValue);
+        });
+
+        // Désactiver les boutons par défaut
+        btnAjouterParticipant.setDisable(true);
+        btnRetirerParticipant.setDisable(true);
     }
 
     /**
@@ -108,6 +177,10 @@ public class FormMissionController implements Initializable {
         } else {
             // Valeurs par défaut pour une nouvelle mission
             dateDebut.setValue(LocalDate.now());
+
+            // Initialiser une nouvelle mission
+            this.mission = new Mission();
+            this.mission.setParticipants(new ArrayList<>());
         }
     }
 
@@ -137,6 +210,48 @@ public class FormMissionController implements Initializable {
     }
 
     /**
+     * Charge tous les personnels disponibles dans la ListView
+     */
+    private void chargerPersonnelsDisponibles() {
+        List<Personnel> personnels = personnelService.getAllPersonnels();
+
+        // En mode édition, exclure les personnels déjà participants
+        if (modeEdition && mission != null && mission.getParticipants() != null) {
+            participantsSelectionnes = new ArrayList<>(mission.getParticipants());
+            personnels = personnels.stream()
+                    .filter(p -> !participantsSelectionnes.contains(p))
+                    .collect(Collectors.toList());
+        }
+
+        listPersonnelsDisponibles.setItems(FXCollections.observableArrayList(personnels));
+        listParticipants.setItems(FXCollections.observableArrayList(participantsSelectionnes));
+    }
+
+    /**
+     * Recherche des personnels en fonction du texte saisi
+     * @param texte Texte de recherche
+     */
+    private void rechercherPersonnel(String texte) {
+        if (texte == null || texte.isEmpty()) {
+            // Si le texte est vide, afficher tous les personnels disponibles
+            chargerPersonnelsDisponibles();
+            return;
+        }
+
+        String recherche = texte.toLowerCase();
+        List<Personnel> tousPersonnels = personnelService.getAllPersonnels();
+
+        // Filtrer les personnels selon la recherche et exclure ceux déjà sélectionnés
+        List<Personnel> personnelsFiltres = tousPersonnels.stream()
+                .filter(p -> !participantsSelectionnes.contains(p))
+                .filter(p -> p.getNomPersonnel().toLowerCase().contains(recherche) ||
+                        p.getPrenomPersonnel().toLowerCase().contains(recherche))
+                .collect(Collectors.toList());
+
+        listPersonnelsDisponibles.setItems(FXCollections.observableArrayList(personnelsFiltres));
+    }
+
+    /**
      * Remplit le formulaire avec les données de la mission à modifier
      */
     private void remplirFormulaire() {
@@ -163,6 +278,14 @@ public class FormMissionController implements Initializable {
 
         txtCircuit.setText(mission.getCircuitMission());
         txtObservations.setText(mission.getObservationMission());
+
+        // Charger les participants
+        if (mission.getParticipants() == null) {
+            mission.setParticipants(missionService.getMissionParticipants(mission.getIdMission()));
+        }
+
+        participantsSelectionnes = new ArrayList<>(mission.getParticipants());
+        listParticipants.setItems(FXCollections.observableArrayList(participantsSelectionnes));
     }
 
     /**
@@ -226,7 +349,21 @@ public class FormMissionController implements Initializable {
 
         Mission savedMission = missionService.addMission(nouvelleMission);
         if (savedMission != null) {
-            AlertUtils.showInformationAlert("Succès", "La mission a été ajoutée avec succès.");
+            // Ajouter les participants à la mission
+            boolean allParticipantsAdded = true;
+            for (Personnel participant : participantsSelectionnes) {
+                boolean success = missionService.addParticipant(savedMission.getIdMission(), participant.getIdPersonnel());
+                if (!success) {
+                    allParticipantsAdded = false;
+                }
+            }
+
+            String message = "La mission a été ajoutée avec succès.";
+            if (!allParticipantsAdded) {
+                message += "\nAttention: Certains participants n'ont pas pu être ajoutés.";
+            }
+
+            AlertUtils.showInformationAlert("Succès", message);
 
             if (parentController != null) {
                 parentController.refreshMissionList();
@@ -248,7 +385,33 @@ public class FormMissionController implements Initializable {
 
             boolean success = missionService.updateMission(mission);
             if (success) {
-                AlertUtils.showInformationAlert("Succès", "La mission a été mise à jour avec succès.");
+                // D'abord, récupérer les participants actuels
+                List<Personnel> participantsActuels = missionService.getMissionParticipants(mission.getIdMission());
+
+                // Supprimer les participants qui ne sont plus sélectionnés
+                for (Personnel participant : participantsActuels) {
+                    if (!participantsSelectionnes.contains(participant)) {
+                        missionService.removeParticipant(mission.getIdMission(), participant.getIdPersonnel());
+                    }
+                }
+
+                // Ajouter les nouveaux participants
+                boolean allParticipantsAdded = true;
+                for (Personnel participant : participantsSelectionnes) {
+                    if (!participantsActuels.contains(participant)) {
+                        boolean addSuccess = missionService.addParticipant(mission.getIdMission(), participant.getIdPersonnel());
+                        if (!addSuccess) {
+                            allParticipantsAdded = false;
+                        }
+                    }
+                }
+
+                String message = "La mission a été mise à jour avec succès.";
+                if (!allParticipantsAdded) {
+                    message += "\nAttention: Certains participants n'ont pas pu être ajoutés.";
+                }
+
+                AlertUtils.showInformationAlert("Succès", message);
 
                 if (parentController != null) {
                     parentController.refreshMissionList();
@@ -293,6 +456,9 @@ public class FormMissionController implements Initializable {
         newMission.setCoutMission(0);
         newMission.setCoutCarburant(0);
 
+        // Ajouter les participants
+        newMission.setParticipants(participantsSelectionnes);
+
         return newMission;
     }
 
@@ -325,6 +491,57 @@ public class FormMissionController implements Initializable {
 
         mission.setCircuitMission(txtCircuit.getText().trim());
         mission.setObservationMission(txtObservations.getText().trim());
+
+        // Mettre à jour la liste des participants
+        mission.setParticipants(participantsSelectionnes);
+    }
+
+    /**
+     * Gère le clic sur le bouton d'ajout d'un participant
+     */
+    @FXML
+    void handleAjouterParticipantButton(ActionEvent event) {
+        Personnel selectedPersonnel = listPersonnelsDisponibles.getSelectionModel().getSelectedItem();
+        if (selectedPersonnel != null) {
+            // Ajouter à la liste des participants sélectionnés
+            participantsSelectionnes.add(selectedPersonnel);
+
+            // Mettre à jour les listes
+            listParticipants.setItems(FXCollections.observableArrayList(participantsSelectionnes));
+
+            // Retirer de la liste des disponibles
+            List<Personnel> disponibles = new ArrayList<>(listPersonnelsDisponibles.getItems());
+            disponibles.remove(selectedPersonnel);
+            listPersonnelsDisponibles.setItems(FXCollections.observableArrayList(disponibles));
+
+            // Désélectionner
+            listPersonnelsDisponibles.getSelectionModel().clearSelection();
+            btnAjouterParticipant.setDisable(true);
+        }
+    }
+
+    /**
+     * Gère le clic sur le bouton de retrait d'un participant
+     */
+    @FXML
+    void handleRetirerParticipantButton(ActionEvent event) {
+        Personnel selectedPersonnel = listParticipants.getSelectionModel().getSelectedItem();
+        if (selectedPersonnel != null) {
+            // Retirer de la liste des participants sélectionnés
+            participantsSelectionnes.remove(selectedPersonnel);
+
+            // Mettre à jour les listes
+            listParticipants.setItems(FXCollections.observableArrayList(participantsSelectionnes));
+
+            // Ajouter à la liste des disponibles
+            List<Personnel> disponibles = new ArrayList<>(listPersonnelsDisponibles.getItems());
+            disponibles.add(selectedPersonnel);
+            listPersonnelsDisponibles.setItems(FXCollections.observableArrayList(disponibles));
+
+            // Désélectionner
+            listParticipants.getSelectionModel().clearSelection();
+            btnRetirerParticipant.setDisable(true);
+        }
     }
 
     /**

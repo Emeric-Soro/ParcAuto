@@ -150,6 +150,27 @@ public class PersonnelDAOImpl extends BaseDAOImpl<Personnel> implements IPersonn
         }
     }
 
+    /**
+     * Vérifie si un email existe déjà pour un autre personnel
+     * @param email Email à vérifier
+     * @param idPersonnel ID du personnel à exclure (pour les mises à jour)
+     * @return true si l'email existe déjà, false sinon
+     */
+    public boolean emailExiste(String email, int idPersonnel) throws SQLException {
+        String query = "SELECT ID_PERSONNEL FROM personnel WHERE EMAIL_PERSONNEL = ? AND ID_PERSONNEL != ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, email);
+            stmt.setInt(2, idPersonnel);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // Retourne true si un résultat existe
+            }
+        }
+    }
+
     @Override
     protected Personnel mapResultSetToEntity(ResultSet rs) throws SQLException {
         Personnel p = new Personnel();
