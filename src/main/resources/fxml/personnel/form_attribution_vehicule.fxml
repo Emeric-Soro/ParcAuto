@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.FormAttributionVehiculeController">
+    <top>
+        <Label text="Attribution de véhicule" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="16.0" />
+            </font>
+            <BorderPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </BorderPane.margin>
+        </Label>
+    </top>
+    <center>
+        <VBox spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="lblPersonnel" text="Personnel: Jean Dupont">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <HBox spacing="10.0">
+                    <children>
+                        <Label text="Véhicule:">
+                            <HBox.margin>
+                                <Insets top="5.0" />
+                            </HBox.margin>
+                        </Label>
+                        <ComboBox fx:id="comboVehicule" prefWidth="250.0" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnAttribuer" defaultButton="true" mnemonicParsing="false" onAction="#handleAttribuerButton" text="Attribuer" />
+                <Button fx:id="btnAnnuler" cancelButton="true" mnemonicParsing="false" onAction="#handleAnnulerButton" text="Annuler" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>

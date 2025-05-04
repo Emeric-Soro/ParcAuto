@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.control.PasswordField?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.FormUtilisateurController">
+    <top>
+        <Label text="Formulaire Utilisateur" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </Label>
+    </top>
+    <center>
+        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Informations de l'utilisateur">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <GridPane hgap="10.0" vgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Login *:" />
+                        <Label text="Email:" GridPane.rowIndex="1" />
+                        <Label text="Rôle *:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtLogin" GridPane.columnIndex="1" />
+                        <TextField fx:id="txtEmail" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="comboRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </children>
+                </GridPane>
+                <CheckBox fx:id="checkChangeMdp" mnemonicParsing="false" text="Changer le mot de passe">
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
+                </CheckBox>
+                <VBox fx:id="passwordContainer" spacing="15.0">
+                    <children>
+                        <Label text="Mot de passe">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <GridPane hgap="10.0" vgap="15.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="Mot de passe *:" />
+                                <Label text="Confirmation *:" GridPane.rowIndex="1" />
+                                <PasswordField fx:id="txtPassword" GridPane.columnIndex="1" />
+                                <PasswordField fx:id="txtConfirmMotDePasse" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+                <Separator prefWidth="200.0" />
+                <Label text="Paramètres additionnels">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <GridPane hgap="10.0" vgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Personnel lié:" />
+                        <Label text="Statut:" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="comboPersonnel" prefWidth="150.0" GridPane.columnIndex="1" />
+
+                        <!-- À la place de votre CheckBox existant -->
+                        <ComboBox fx:id="comboStatut"
+                                  prefWidth="150.0"
+                                  GridPane.columnIndex="1"
+                                  GridPane.rowIndex="1"/>
+
+                    </children>
+                </GridPane>
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnEnregistrer" defaultButton="true" mnemonicParsing="false" onAction="#handleEnregistrerButton" text="Enregistrer" />
+                <Button fx:id="btnAnnuler" cancelButton="true" mnemonicParsing="false" onAction="#handleAnnulerButton" text="Annuler" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>

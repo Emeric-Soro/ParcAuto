@@ -2,8 +2,10 @@ package main.java.ci.miage.MiAuto.services;
 
 import main.java.ci.miage.MiAuto.dao.impl.ActiviteLogDAOImpl;
 import main.java.ci.miage.MiAuto.dao.impl.PersonnelDAOImpl;
+import main.java.ci.miage.MiAuto.dao.impl.UtilisateurDAOImpl;
 import main.java.ci.miage.MiAuto.models.ActiviteLog;
 import main.java.ci.miage.MiAuto.models.Personnel;
+import main.java.ci.miage.MiAuto.models.Utilisateur;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,10 +15,12 @@ public class PersonnelService {
 
     private PersonnelDAOImpl personnelDAO;
     private ActiviteLogDAOImpl activiteLogDAO;
+    private UtilisateurDAOImpl utilisateurDAO;
 
     public PersonnelService() {
         this.personnelDAO = new PersonnelDAOImpl();
         this.activiteLogDAO = new ActiviteLogDAOImpl();
+        this.utilisateurDAO = new UtilisateurDAOImpl();
     }
 
     /**
@@ -169,6 +173,35 @@ public class PersonnelService {
         } catch (SQLException e) {
             System.err.println("Erreur lors de la vérification de l'email: " + e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Récupère la liste des personnels non associés à un utilisateur
+     */
+    public List<Personnel> getPersonnelsDisponibles() {
+        try {
+            List<Personnel> allPersonnels = personnelDAO.findAll();
+            List<Utilisateur> allUsers = utilisateurDAO.findAll();
+
+            // Filtrer les personnels qui ont déjà un compte utilisateur
+            List<Personnel> disponibles = new ArrayList<>();
+            for (Personnel personnel : allPersonnels) {
+                boolean hasUser = false;
+                for (Utilisateur user : allUsers) {
+                    if (user.getIdPersonnel() == personnel.getIdPersonnel()) {
+                        hasUser = true;
+                        break;
+                    }
+                }
+                if (!hasUser) {
+                    disponibles.add(personnel);
+                }
+            }
+            return disponibles;
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération des personnels disponibles: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 }

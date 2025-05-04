@@ -1,7 +1,6 @@
 package main.java.ci.miage.MiAuto.dao.impl;
 
 import main.java.ci.miage.MiAuto.dao.interfaces.IRoleDAO;
-import main.java.ci.miage.MiAuto.models.Privilege;
 import main.java.ci.miage.MiAuto.models.Role;
 
 import java.sql.*;
@@ -10,11 +9,8 @@ import java.util.List;
 
 public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
 
-    private PrivilegeDAOImpl privilegeDAO;
-
     public RoleDAOImpl() {
         super();
-        this.privilegeDAO = new PrivilegeDAOImpl();
     }
 
     @Override
@@ -33,14 +29,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         role.setIdRole(generatedKeys.getInt(1));
-
-                        // Ajouter les privilèges pour ce rôle si présents
-                        if (role.getPrivileges() != null && !role.getPrivileges().isEmpty()) {
-                            for (Privilege privilege : role.getPrivileges()) {
-                                addPrivilegeToRole(role.getIdRole(), privilege.getIdPrivilege());
-                            }
-                        }
-
                         return role;
                     }
                 }
@@ -67,17 +55,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
 
     @Override
     public boolean delete(int id) throws SQLException {
-        // Supprimer d'abord les associations avec les privilèges
-        String deletePrivilegesQuery = "DELETE FROM role_privilege WHERE ID_ROLE = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmtDeletePrivileges = conn.prepareStatement(deletePrivilegesQuery)) {
-
-            stmtDeletePrivileges.setInt(1, id);
-            stmtDeletePrivileges.executeUpdate();
-        }
-
-        // Puis supprimer le rôle
         String query = "DELETE FROM role WHERE ID_ROLE = ?";
 
         try (Connection conn = getConnection();
@@ -100,12 +77,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Role role = mapResultSetToEntity(rs);
-
-                    // Charger les privilèges associés
-                    loadPrivileges(role);
-
-                    return role;
+                    return mapResultSetToEntity(rs);
                 }
             }
         }
@@ -116,19 +88,14 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
     @Override
     public List<Role> findAll() throws SQLException {
         List<Role> roles = new ArrayList<>();
-        String query = "SELECT * FROM role";
+        String query = "SELECT * FROM role ORDER BY ID_ROLE";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                Role role = mapResultSetToEntity(rs);
-
-                // Charger les privilèges associés
-                loadPrivileges(role);
-
-                roles.add(role);
+                roles.add(mapResultSetToEntity(rs));
             }
         }
 
@@ -146,12 +113,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Role role = mapResultSetToEntity(rs);
-
-                    // Charger les privilèges associés
-                    loadPrivileges(role);
-
-                    return role;
+                    return mapResultSetToEntity(rs);
                 }
             }
         }
@@ -170,12 +132,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
             stmt.setInt(2, idPrivilege);
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            // Si le privilège existe déjà pour ce rôle, ignorer l'erreur
-            if (e.getErrorCode() == 1062) { // Code d'erreur MySQL pour clé dupliquée
-                return true;
-            }
-            throw e;
         }
     }
 
@@ -202,33 +158,5 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements IRoleDAO {
         role.setDescription(rs.getString("DESCRIPTION"));
 
         return role;
-    }
-
-    /**
-     * Charge les privilèges associés à un rôle
-     * @param role Rôle à compléter
-     * @throws SQLException En cas d'erreur SQL
-     */
-    private void loadPrivileges(Role role) throws SQLException {
-        String query = "SELECT p.* FROM privilege p " +
-                "JOIN role_privilege rp ON p.ID_PRIVILEGE = rp.ID_PRIVILEGE " +
-                "WHERE rp.ID_ROLE = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, role.getIdRole());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Privilege privilege = new Privilege();
-                    privilege.setIdPrivilege(rs.getInt("ID_PRIVILEGE"));
-                    privilege.setNomPrivilege(rs.getString("NOM_PRIVILEGE"));
-                    privilege.setDescription(rs.getString("DESCRIPTION"));
-
-                    role.addPrivilege(privilege);
-                }
-            }
-        }
     }
 }

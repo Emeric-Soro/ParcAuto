@@ -104,13 +104,24 @@ public class DashboardController implements Initializable {
      * Configure les permissions selon le rôle de l'utilisateur
      */
     private void configurePermissions(Utilisateur user) {
-        // Exemple de configuration des permissions
-        if (!SessionManager.getInstance().hasPrivilege("GESTION_UTILISATEURS")) {
-            btnUtilisateurs.setDisable(true);
-            btnUtilisateurs.setVisible(false);
-        }
+        // Récupérer le rôle et ses privilèges
+        if (user != null && user.getRole() != null) {
+            String nomRole = user.getRole().getNomRole();
 
-        // Autres permissions à configurer selon les besoins
+            // Log pour debug
+            System.out.println("Configuration des permissions pour le rôle : " + nomRole);
+
+            // Afficher le bouton Utilisateurs seulement pour les rôles autorisés
+            boolean canManageUsers = nomRole.equals("ADMINISTRATEUR") ||
+                    nomRole.equals("GESTIONNAIRE_LOGISTIQUE");
+
+            btnUtilisateurs.setVisible(canManageUsers);
+            btnUtilisateurs.setDisable(!canManageUsers);
+
+            // Autres permissions selon les besoins
+            // btnPersonnel.setVisible(canManageUsers);
+            // etc...
+        }
     }
 
     @FXML
@@ -166,7 +177,7 @@ public class DashboardController implements Initializable {
     void handleUtilisateursButton(ActionEvent event) {
         setActiveButton(btnUtilisateurs);
         lblTitle.setText("Gestion des Utilisateurs");
-        loadPage("utilisateur/utilisateur.fxml");
+        loadPage("utilisateur/liste_utilisateur.fxml");
     }
 
     @FXML
@@ -245,6 +256,6 @@ public class DashboardController implements Initializable {
     }
 
     public StackPane getContentArea() {
-        return null;
+        return contentArea;
     }
 }

@@ -449,6 +449,7 @@ public class VehiculeService {
                         " (" + vehicule.getImmatriculation() + ") a été attribué à " +
                         personnel.getNomPersonnel() + " " + personnel.getPrenomPersonnel());
                 activiteLogDAO.save(log);
+                System.out.println("Attribution - idVehicule: " + idVehicule + ", idPersonnel: " + personnel.getIdPersonnel());
             } else {
                 // Retirer l'attribution à tous les personnels ayant ce véhicule
                 List<Personnel> personnels = getAllPersonnelsWithVehicule(idVehicule);

@@ -81,18 +81,6 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
         }
     }
 
-    @Override
-    public Service findByLibelle(String libelle) throws SQLException {
-        String query = "SELECT * FROM service WHERE LOWER(lib_service) = LOWER(?)";
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, libelle);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return mapResultSetToEntity(rs);
-            }
-        }
-        return null;
-    }
 
     @Override
     public boolean existsByLibelle(String libelle) throws SQLException {
@@ -143,5 +131,37 @@ public class ServiceDAOImpl extends BaseDAOImpl<Service> implements IServiceDAO 
         s.setLibelleService(rs.getString("lib_service"));
         s.setLocalisationService(rs.getString("localisation_service"));
         return s;
+    }
+
+
+    public List<Service> findByLocalisation(String localisation) throws SQLException {
+        List<Service> services = new ArrayList<>();
+        String query = "SELECT * FROM service WHERE LOWER(localisation_service) LIKE LOWER(?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, "%" + localisation + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    services.add(mapResultSetToEntity(rs));
+                }
+            }
+        }
+        return services;
+    }
+
+    @Override
+    public Service findByLibelle(String libelle) throws SQLException {
+        // Ajoutez cette méthode manquante
+        String query = "SELECT * FROM service WHERE LIB_SERVICE = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, libelle);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return mapResultSetToEntity(rs);
+            }
+        }
+        return null;
     }
 }

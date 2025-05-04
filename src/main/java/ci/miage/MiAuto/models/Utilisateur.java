@@ -21,9 +21,15 @@ public class Utilisateur {
 
     // Constructeur par défaut
     public Utilisateur() {
+        this.statut = true;  // Par défaut, un utilisateur est actif
     }
 
-    // Constructeur avec les champs obligatoires
+    /**
+     * Constructeur avec paramètres essentiels
+     * @param login Login de l'utilisateur
+     * @param motDePasse Mot de passe de l'utilisateur
+     * @param idRole ID du rôle de l'utilisateur
+     */
     public Utilisateur(int idRole, String login, String motDePasse) {
         this.idRole = idRole;
         this.login = login;
@@ -31,7 +37,17 @@ public class Utilisateur {
         this.statut = true;
     }
 
-    // Constructeur complet
+    /**
+     * Constructeur complet
+     * @param idUtilisateur ID de l'utilisateur
+     * @param idPersonnel ID du personnel associé (peut être null)
+     * @param idRole ID du rôle
+     * @param login Login
+     * @param motDePasse Mot de passe
+     * @param email Email
+     * @param statut Statut (actif/inactif)
+     * @param derniereConnexion Date de dernière connexion
+     */
     public Utilisateur(int idUtilisateur, Integer idPersonnel, int idRole, String login,
                        String motDePasse, String email, boolean statut,
                        LocalDateTime derniereConnexion) {
@@ -93,6 +109,7 @@ public class Utilisateur {
     public void setEmail(String email) {
         this.email = email;
     }
+
 
     public boolean isStatut() {
         return statut;

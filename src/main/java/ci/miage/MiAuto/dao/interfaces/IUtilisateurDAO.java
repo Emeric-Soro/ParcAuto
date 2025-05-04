@@ -123,4 +123,36 @@ public interface IUtilisateurDAO extends IBaseDAO<Utilisateur> {
     void delete(String id) throws SQLException;
 
     Utilisateur findById(String id) throws SQLException;
+
+    /**
+     * Vérifie si un login existe déjà
+     * @param login Login à vérifier
+     * @param idUtilisateur ID de l'utilisateur à exclure (0 pour un nouvel utilisateur)
+     * @return true si le login existe déjà, false sinon
+     * @throws SQLException En cas d'erreur SQL
+     */
+    boolean loginExists(String login, int idUtilisateur) throws SQLException;
+
+    /**
+     * Met à jour le statut d'un utilisateur (actif/inactif)
+     * @param idUtilisateur ID de l'utilisateur
+     * @param statut Nouveau statut
+     * @return true si la mise à jour a réussi, false sinon
+     * @throws SQLException En cas d'erreur SQL
+     */
+    boolean updateStatus(int idUtilisateur, boolean statut) throws SQLException;
+
+    /**
+     * Recherche les utilisateurs actifs
+     * @return Liste des utilisateurs actifs
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<Utilisateur> findActive() throws SQLException;
+
+    /**
+     * Recherche les utilisateurs inactifs
+     * @return Liste des utilisateurs inactifs
+     * @throws SQLException En cas d'erreur SQL
+     */
+    List<Utilisateur> findInactive() throws SQLException;
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.PersonnelController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.PersonnelController">
     <top>
         <VBox spacing="10.0" BorderPane.alignment="CENTER">
             <children>
@@ -38,13 +38,13 @@
         <TableView fx:id="tablePersonnels" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
-                <TableColumn fx:id="colNom" prefWidth="120.0" text="Nom" />
-                <TableColumn fx:id="colPrenom" prefWidth="120.0" text="Prénom" />
-                <TableColumn fx:id="colEmail" prefWidth="150.0" text="Email" />
+                <TableColumn fx:id="colNom" prefWidth="100.0" text="Nom" />
+                <TableColumn fx:id="colPrenom" prefWidth="100.0" text="Prénom" />
+                <TableColumn fx:id="colGenre" prefWidth="60.0" text="Genre" />
                 <TableColumn fx:id="colContact" prefWidth="120.0" text="Contact" />
+                <TableColumn fx:id="colEmail" prefWidth="200.0" text="Email" />
                 <TableColumn fx:id="colFonction" prefWidth="120.0" text="Fonction" />
-                <TableColumn fx:id="colService" prefWidth="120.0" text="Service" />
-                <TableColumn fx:id="colVehicule" prefWidth="100.0" text="Véhicule" />
+                <TableColumn fx:id="colService" prefWidth="150.0" text="Service" />
             </columns>
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />
@@ -60,7 +60,6 @@
                 <Button fx:id="btnAjouter" mnemonicParsing="false" onAction="#handleAjouterButton" text="Ajouter" />
                 <Button fx:id="btnModifier" disable="true" mnemonicParsing="false" onAction="#handleModifierButton" text="Modifier" />
                 <Button fx:id="btnSupprimer" disable="true" mnemonicParsing="false" onAction="#handleSupprimerButton" text="Supprimer" />
-                <Button fx:id="btnAttribuerVehicule" disable="true" mnemonicParsing="false" onAction="#handleAttribuerVehiculeButton" text="Attribuer véhicule" />
             </children>
             <BorderPane.margin>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
