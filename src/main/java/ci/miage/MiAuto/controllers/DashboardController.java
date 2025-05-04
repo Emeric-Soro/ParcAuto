@@ -167,7 +167,7 @@ public class DashboardController implements Initializable {
     }
 
     @FXML
-    void handleAssurancesButton(ActionEvent event) {
+    private void handleAssurancesButton(ActionEvent event) {
         setActiveButton(btnAssurances);
         lblTitle.setText("Gestion des Assurances");
         loadPage("assurance/liste_assurances.fxml");
