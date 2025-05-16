@@ -1,164 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.FormVehiculeController">
-    <top>
-        <Label text="Formulaire Véhicule" BorderPane.alignment="CENTER">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-            <BorderPane.margin>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </BorderPane.margin>
-        </Label>
-    </top>
-    <center>
-        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.FormVehiculeController">
+    <content>
+        <VBox spacing="20.0" styleClass="form-container">
             <children>
-                <Label text="Informations de base">
+                <Label styleClass="form-title" text="Informations du véhicule">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font size="20.0" />
                     </font>
                 </Label>
-                <GridPane hgap="10.0" vgap="10.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+
+                <!-- Informations de base -->
+                <VBox spacing="15.0" styleClass="form-section">
                     <children>
-                        <Label text="Immatriculation *:" />
-                        <Label text="N° de châssis *:" GridPane.rowIndex="1" />
-                        <Label text="Marque *:" GridPane.rowIndex="2" />
-                        <Label text="Modèle *:" GridPane.rowIndex="3" />
-                        <Label text="État *:" GridPane.rowIndex="4" />
-                        <TextField fx:id="txtImmatriculation" GridPane.columnIndex="1" />
-                        <TextField fx:id="txtNumeroChassi" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtMarque" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtModele" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <ComboBox fx:id="comboEtat" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="section-title" text="Identification" />
+
+                        <GridPane hgap="15.0" vgap="15.0">
+                            <children>
+                                <Label text="Immatriculation *" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <TextField fx:id="txtImmatriculation" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                <Label text="Numéro de châssis *" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <TextField fx:id="txtNumeroChassi" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                <Label text="Marque *" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <TextField fx:id="txtMarque" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                <Label text="Modèle *" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <TextField fx:id="txtModele" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                        </GridPane>
                     </children>
-                </GridPane>
-                <Separator prefWidth="200.0" />
-                <Label text="Caractéristiques techniques">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <GridPane hgap="10.0" vgap="10.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Caractéristiques -->
+                <VBox spacing="15.0" styleClass="form-section">
                     <children>
-                        <Label text="Énergie:" />
-                        <Label text="Nombre de places:" GridPane.rowIndex="1" />
-                        <Label text="Puissance (CV):" GridPane.rowIndex="2" />
-                        <Label text="Couleur:" GridPane.rowIndex="3" />
-                        <Label text="Prix:" GridPane.rowIndex="4" />
-                        <ComboBox fx:id="comboEnergie" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <TextField fx:id="txtNbPlaces" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtPuissance" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtCouleur" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <TextField fx:id="txtPrix" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="section-title" text="Caractéristiques" />
+
+                        <GridPane hgap="15.0" vgap="15.0">
+                            <children>
+                                <Label text="État *" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <ComboBox fx:id="comboEtat" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                <Label text="Énergie" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <ComboBox fx:id="comboEnergie" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                <Label text="Nombre de places" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <TextField fx:id="txtNbPlaces" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                <Label text="Puissance (CV)" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <TextField fx:id="txtPuissance" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                <Label text="Couleur" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <TextField fx:id="txtCouleur" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                <Label text="Prix (FCFA)" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                <TextField fx:id="txtPrix" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                                <Label text="Kilométrage" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                <TextField fx:id="txtKilometrage" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                        </GridPane>
                     </children>
-                </GridPane>
-                <Separator prefWidth="200.0" />
-                <Label text="Dates">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <GridPane hgap="10.0" vgap="10.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Dates importantes -->
+                <VBox spacing="15.0" styleClass="form-section">
                     <children>
-                        <Label text="Date d'acquisition:" />
-                        <Label text="Date d'amortissement:" GridPane.rowIndex="1" />
-                        <Label text="Date mise en service:" GridPane.rowIndex="2" />
-                        <Label text="Dernière visite:" GridPane.rowIndex="3" />
-                        <Label text="Prochaine visite:" GridPane.rowIndex="4" />
-                        <DatePicker fx:id="dateAcquisition" GridPane.columnIndex="1" />
-                        <DatePicker fx:id="dateAmortissement" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <DatePicker fx:id="dateMiseEnService" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <DatePicker fx:id="dateDerniereVisite" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <DatePicker fx:id="dateProchainVisite" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="section-title" text="Dates importantes" />
+
+                        <GridPane hgap="15.0" vgap="15.0">
+                            <children>
+                                <Label text="Date d'acquisition" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <DatePicker fx:id="dateAcquisition" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                <Label text="Date d'amortissement" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <DatePicker fx:id="dateAmortissement" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                <Label text="Date de mise en service" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <DatePicker fx:id="dateMiseEnService" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                <Label text="Dernière visite technique" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <DatePicker fx:id="dateDerniereVisite" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                <Label text="Prochaine visite technique" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <DatePicker fx:id="dateProchainVisite" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                        </GridPane>
                     </children>
-                </GridPane>
-                <Separator prefWidth="200.0" />
-                <Label text="Autres informations">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <GridPane hgap="10.0" vgap="10.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Options -->
+                <VBox spacing="15.0" styleClass="form-section">
                     <children>
-                        <Label text="Kilométrage:" />
-                        <Label text="Statut:" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtKilometrage" GridPane.columnIndex="1" />
-                        <CheckBox fx:id="checkStatutAttribution" mnemonicParsing="false" text="Véhicule attribué" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="checkStatutAttribution" text="Attribué à un personnel" />
                     </children>
-                </GridPane>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Boutons d'action -->
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Button fx:id="btnEnregistrer" onAction="#handleEnregistrerButton" styleClass="btn-primary" text="Enregistrer" />
+                        <Button fx:id="btnAnnuler" onAction="#handleAnnulerButton" styleClass="btn-secondary" text="Annuler" />
+                    </children>
+                </HBox>
             </children>
             <padding>
-                <Insets left="10.0" right="10.0" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
         </VBox>
-    </center>
-    <bottom>
-        <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
-            <children>
-                <Button fx:id="btnEnregistrer" defaultButton="true" mnemonicParsing="false" onAction="#handleEnregistrerButton" text="Enregistrer" />
-                <Button fx:id="btnAnnuler" cancelButton="true" mnemonicParsing="false" onAction="#handleAnnulerButton" text="Annuler" />
-            </children>
-            <BorderPane.margin>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </BorderPane.margin>
-        </HBox>
-    </bottom>
-</BorderPane>
+    </content>
+</ScrollPane>

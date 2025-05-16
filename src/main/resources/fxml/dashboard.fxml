@@ -1,239 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.DashboardContentController">
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.DashboardContentController">
     <content>
-        <AnchorPane prefHeight="600.0" styleClass="dashboard-content">
+        <VBox spacing="20.0" styleClass="dashboard-content">
             <children>
-                <VBox layoutX="14.0" layoutY="14.0" prefHeight="622.0" prefWidth="743.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                <!-- Statistiques en cartes -->
+                <GridPane hgap="20.0" vgap="20.0">
                     <children>
-                        <Label styleClass="section-title" text="Statistiques générales">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-                        <GridPane alignment="CENTER" hgap="20.0" vgap="20.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
+                        <VBox alignment="CENTER" styleClass="stat-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
                             <children>
-                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="stat-card">
-                                    <children>
-                                        <Label styleClass="stat-label" text="Véhicules">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblTotalVehicules" styleClass="stat-value" text="42">
-                                            <font>
-                                                <Font size="36.0" />
-                                            </font>
-                                        </Label>
-                                        <Label styleClass="stat-description" text="Total des véhicules" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                </VBox>
-                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="stat-card" GridPane.columnIndex="1">
-                                    <children>
-                                        <Label styleClass="stat-label" text="En mission">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblVehiculesEnMission" styleClass="stat-value" text="12">
-                                            <font>
-                                                <Font size="36.0" />
-                                            </font>
-                                        </Label>
-                                        <Label styleClass="stat-description" text="Véhicules en mission" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                </VBox>
-                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="stat-card" GridPane.columnIndex="2">
-                                    <children>
-                                        <Label styleClass="stat-label" text="Disponibles">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblVehiculesDisponibles" styleClass="stat-value" text="25">
-                                            <font>
-                                                <Font size="36.0" />
-                                            </font>
-                                        </Label>
-                                        <Label styleClass="stat-description" text="Véhicules disponibles" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                </VBox>
+                                <Label fx:id="lblTotalVehicules" styleClass="stat-number" text="0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="stat-label" text="Total Véhicules" />
                             </children>
-                        </GridPane>
-                        <Label styleClass="section-title" text="Maintenance">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-                        <GridPane hgap="20.0" vgap="20.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox alignment="CENTER" styleClass="stat-card stat-success" GridPane.columnIndex="1" GridPane.rowIndex="0">
                             <children>
-                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="stat-card">
-                                    <children>
-                                        <Label styleClass="stat-label" text="Visites à effectuer">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblVisitesAPlanifier" styleClass="stat-value-warning" text="3">
-                                            <font>
-                                                <Font size="36.0" />
-                                            </font>
-                                        </Label>
-                                        <Label styleClass="stat-description" text="Visites techniques à planifier" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                </VBox>
-                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="stat-card" GridPane.columnIndex="1">
-                                    <children>
-                                        <Label styleClass="stat-label" text="Entretiens">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblEntretiensEnCours" styleClass="stat-value-info" text="5">
-                                            <font>
-                                                <Font size="36.0" />
-                                            </font>
-                                        </Label>
-                                        <Label styleClass="stat-description" text="Entretiens en cours" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                    </padding>
-                                </VBox>
+                                <Label fx:id="lblVehiculesDisponibles" styleClass="stat-number" text="0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="stat-label" text="Disponibles" />
                             </children>
-                        </GridPane>
-                        <Label styleClass="section-title" text="Activités récentes">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-                        <VBox fx:id="activitesContainer" prefHeight="200.0" prefWidth="100.0" styleClass="activities-container">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox alignment="CENTER" styleClass="stat-card stat-warning" GridPane.columnIndex="2" GridPane.rowIndex="0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="activity-item">
-                                    <children>
-                                        <Label text="Le véhicule ">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label styleClass="activity-highlight" text="Toyota Corolla (AB-123-CD)">
-                                            <HBox.margin>
-                                                <Insets left="5.0" right="5.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label text="a été attribué à">
-                                            <HBox.margin>
-                                                <Insets right="5.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label styleClass="activity-highlight" text="Jean Dupont" />
-                                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                                        <Label styleClass="activity-time" text="Il y a 1 heure">
-                                            <HBox.margin>
-                                                <Insets right="10.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-                                    </padding>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="200.0" styleClass="activity-item">
-                                    <children>
-                                        <Label text="Une nouvelle mission a été créée : ">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label styleClass="activity-highlight" text="Intervention client Abidjan">
-                                            <HBox.margin>
-                                                <Insets left="5.0" right="5.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                                        <Label styleClass="activity-time" text="Il y a 3 heures">
-                                            <HBox.margin>
-                                                <Insets right="10.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-                                    </padding>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" prefHeight="50.0" prefWidth="200.0" styleClass="activity-item">
-                                    <children>
-                                        <Label text="Le véhicule ">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label styleClass="activity-highlight" text="Renault Clio (EF-456-GH)">
-                                            <HBox.margin>
-                                                <Insets left="5.0" right="5.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label text="est entré en maintenance">
-                                            <HBox.margin>
-                                                <Insets right="5.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                                        <Label styleClass="activity-time" text="Hier, 14:30">
-                                            <HBox.margin>
-                                                <Insets right="10.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-                                    </padding>
-                                </HBox>
+                                <Label fx:id="lblVehiculesEnMission" styleClass="stat-number" text="0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="stat-label" text="En Mission" />
                             </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox alignment="CENTER" styleClass="stat-card stat-info" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <children>
+                                <Label fx:id="lblEntretiensEnCours" styleClass="stat-number" text="0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="stat-label" text="Entretiens en cours" />
+                            </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox alignment="CENTER" styleClass="stat-card stat-danger" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <children>
+                                <Label fx:id="lblVisitesAPlanifier" styleClass="stat-number" text="0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="stat-label" text="Visites à planifier" />
+                            </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
                         </VBox>
                     </children>
+                </GridPane>
+
+                <!-- Activités récentes -->
+                <VBox styleClass="activity-panel">
+                    <children>
+                        <Label styleClass="panel-title" text="Activités récentes">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Separator />
+                        <VBox fx:id="activitesContainer" spacing="10.0">
+                            <!-- Les activités seront ajoutées dynamiquement ici -->
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
                 </VBox>
             </children>
-        </AnchorPane>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
     </content>
 </ScrollPane>
