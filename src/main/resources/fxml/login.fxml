@@ -1,46 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.LoginController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ci.miage.MiAuto.controllers.LoginController">
     <children>
         <HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <!-- Panneau de gauche avec image -->
-                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="400.0" styleClass="login-left-panel">
-                    <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../images/logo.png" />
-                            </image>
-                        </ImageView>
-                        <Label text="MiAuto" textFill="WHITE">
-                            <font>
-                                <Font name="System Bold" size="36.0" />
-                            </font>
-                        </Label>
-                        <Label text="Gestion du Parc Automobile" textFill="WHITE">
-                            <font>
-                                <Font size="16.0" />
-                            </font>
-                        </Label>
-                    </children>
-                    <padding>
-                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-                    </padding>
-                </VBox>
 
                 <!-- Panneau de droite avec formulaire -->
-                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="400.0" styleClass="login-form">
+                <VBox alignment="CENTER" styleClass="login-form">
                     <children>
-                        <VBox alignment="CENTER_LEFT" maxWidth="300.0" spacing="20.0">
+                        <VBox alignment="CENTER" maxWidth="300.0" spacing="20.0" style="-fx-background-color: #f8f8f8;">
                             <children>
-                                <Label text="Connexion" styleClass="form-title">
+                              <ImageView fitHeight="200.0" fitWidth="317.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../images/logo.png" />
+                                  </image>
+                           <effect>
+                              <Bloom threshold="1.0" />
+                           </effect>
+                              </ImageView>
+                              <Label text="Gestion du Parc Automobile">
+                                  <font>
+                                      <Font size="16.0" />
+                                  </font>
+                           <effect>
+                              <Bloom threshold="1.0" />
+                           </effect>
+                              </Label>
+                                <Label styleClass="form-title" text="Connexion">
                                     <font>
                                         <Font size="24.0" />
                                     </font>
@@ -48,21 +41,21 @@
 
                                 <VBox spacing="10.0">
                                     <children>
-                                        <Label text="Nom d'utilisateur" styleClass="form-label" />
+                                        <Label styleClass="form-label" text="Nom d'utilisateur" />
                                         <TextField fx:id="txtUsername" prefHeight="40.0" promptText="Entrez votre nom d'utilisateur" styleClass="form-field" />
                                     </children>
                                 </VBox>
 
                                 <VBox spacing="10.0">
                                     <children>
-                                        <Label text="Mot de passe" styleClass="form-label" />
+                                        <Label styleClass="form-label" text="Mot de passe" />
                                         <PasswordField fx:id="txtPassword" prefHeight="40.0" promptText="Entrez votre mot de passe" styleClass="form-field" />
                                     </children>
                                 </VBox>
 
                                 <Label fx:id="lblError" styleClass="error-label" visible="false" wrapText="true" />
 
-                                <Button fx:id="btnLogin" onAction="#handleLoginButton" prefHeight="40.0" prefWidth="300.0" styleClass="btn-primary" text="Se connecter" />
+                                <Button fx:id="btnLogin" onAction="#handleLoginButton" prefHeight="39.0" prefWidth="336.0" styleClass="btn-primary" text="Se connecter" />
                             </children>
                         </VBox>
                     </children>

@@ -1,0 +1,76 @@
+/* assurance-form.css */
+
+/* Style général du formulaire */
+.root {
+    -fx-background-color: #f4f4f4;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Titre principal */
+.label {
+    -fx-text-fill: #333333;
+}
+
+.label:focused {
+    -fx-text-fill: #000000;
+}
+
+/* Titre de section */
+.label .text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Labels en rouge pour les champs obligatoires */
+.label[text="Les champs marqués avec un * sont obligatoires."] {
+    -fx-text-fill: #cd0000;
+    -fx-font-style: italic;
+    -fx-font-size: 12px;
+}
+
+/* Champs texte */
+.text-field {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #cccccc;
+    -fx-padding: 5px;
+}
+
+/* DatePicker */
+.date-picker {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #cccccc;
+}
+
+/* Boutons */
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-padding: 6px 12px;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+.button:cancel-button {
+    -fx-background-color: #d9534f;
+}
+
+.button:cancel-button:hover {
+    -fx-background-color: #c9302c;
+}
+
+/* Espacement du bas */
+.hbox {
+    -fx-padding: 10px;
+}
+
+/* Séparateur */
+.separator {
+    -fx-padding: 10 0 10 0;
+}
